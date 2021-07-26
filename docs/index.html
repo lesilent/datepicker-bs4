@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js" integrity="sha512-wV7Yj1alIZDqZFCUQJy85VN+qvEIly93fIQAN7iqDFCPEucLCeNFz4r35FCo9s6WrpdDQPi80xbljXB8Bjtvcg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.6/dayjs.min.js" integrity="sha512-bwD3VD/j6ypSSnyjuaURidZksoVx3L1RPvTkleC48SbHCZsemT3VKMD39KknPnH728LLXVMTisESIBOAb5/W0Q==" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" integrity="sha512-RXf+QSDCUQs5uwRKaDoXt55jygZZm2V++WUZduaU/Ui/9EGp3f/2KZVahFZBKGH0s774sd3HmrhUy+SgOFQLVQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
+<script src="js/datepicker-bs4.js?" defer="defer"></script>
+</head>
+<body>
+<div class="container py-3">
+<h1>datepicker-bs4</h1>
+
+<h2>Examples</h2>
+
+<div class="card">
+<div class="card-header">Basic Example</div>
+<div class="card-body">
+<div class="row justify-content-start">
+<div class="form-group col-6">
+<label for="start_date">Start Date:</label>
+<input type="text" id="start_date" class="form-control" name="start_date" />
+</div><!-- /.form-group -->
+</div><!-- /.row -->
+</div><!-- /.card-body -->
+</div><!-- /card -->
+<br />
+<div class="card">
+<div class="card-header">Example with min and max dates</div>
+<div class="card-body">
+<div class="row justify-content-start">
+<div class="form-group col-6">
+<label for="end_date">End Date:</label>
+<input type="text" id="end_date" class="form-control" name="end_date" min="2000-01-01" max="2025-12-31" />
+</div><!-- /.form-group -->
+</div><!-- /.row -->
+</div><!-- /.card-body -->
+</div><!-- /card -->
+<br />
+<div class="card">
+<div class="card-header">Example with toggle button</div>
+<div class="card-body">
+<div class="row justify-content-start">
+<div class="form-group col-6">
+<label for="birth_date">Birth Date:</label>
+<div class="input-group">
+<input type="text" id="birth_date" class="form-control" name="birth_date" />
+<div class="input-group-append"><button type="button" class="btn btn-outline-secondary" data-toggle="datepicker"><i class="far fa-calendar-alt"></i></button></div>
+</div>
+</div><!-- /.form-group -->
+</div><!-- /.row -->
+</div><!-- /.card-body -->
+</div><!-- /card -->
+<br />
+</div><!-- /.container -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	jQuery('#start_date, #end_date, #birth_date').datepicker({
+
+	});
+});
+</script>
+</body>
+</html>
