@@ -35,23 +35,19 @@ date picker for Bootstrap 4
 ```
 
 ```javascript
-jQuery('.multiselect').multiselect();
+jQuery('#birth_date').datepicker();
 ```
 
 ## Options
 
 | Option | Default | Description |
 | --- | :---: | --- |
-| `collapseOptGroupsByDefault` | `true` | When an optgroup exists in a select, collapse them. |
-| `enableCaseInsensitiveFiltering` | `true` | Enable case insensitive filtering when filtering is enabled. |
-| `enableCollapsibleOptGroups` | `true` | Make optgroups collapsible. |
-| `enableFiltering` | `false` | Enable a search filter to select options with. |
-| `includeSelectAllOption` | `false` | Include an option to "Select All". This is typically disabled because the `includeSelectAllOptionMin` is normally used. |
+| `format` | `MM/DD/YYYY` | Date format using [Dayjs format](https://day.js.org/docs/en/display/format). |
+| `maxDate` | `null` | The maximum allowed date in YYYY-MM-DD format. |
+| `minDate` | `1900-01-01` | The minimum allowed date in YYYY-MM-DD format. |
 | `includeSelectAllOptionMin` | `50` | Minimum number of options that trigger the "Select All" option be enabled. |
-| `minScreenWidth` | `576` | Minimum screen width where multiselect is enabled. |
-| `selectAllDeselectAll` | `false` | De-select all options if the "Select All" option is selected. |
-| `selectAllText` | `'All'` | The text for "Sselect All" option. |
-| `selectAllValue` | `''` | The value for the "Select All" option. |
+| `minScreenWidth` | `576` | Minimum screen width where datepicker is enabled. |
+| `popoverWidth` | `19rem` | Width of the Bootstrap popover. |
 
 ## Demo
 

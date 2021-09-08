@@ -21,7 +21,7 @@ var settings = {
 };
 
 /**
- * Flag for whehter plugin has been initialized
+ * Flag for whether plugin has been initialized
  *
  * @type {boolean}
  */
