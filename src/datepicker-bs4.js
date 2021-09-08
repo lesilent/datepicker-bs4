@@ -14,8 +14,8 @@
  */
 var settings = {
 	format: 'MM/DD/YYYY',
-	maxDate: false,
-	minDate: false,
+	maxDate: null,
+	minDate: '1900-01-01',
 	minScreenWidth: 576,
 	popoverWidth: '19rem'
 };
@@ -50,19 +50,19 @@ function parseDate(str, options)
 	var input_date;
 	if (typeof str == 'object' && str instanceof dayjs)
 	{
-		return (str.isValid()) ? false : str;
+		return (str.isValid()) ? str : false;
 	}
 	str = str.replace(/^\s+|\s+$/g, '');
 	if ((matches = str.match(/^(\d{4})\s*\-\s*([01]\d)\s*\-\s*([0-3]\d)$/))
-		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 12
-		&& parseInt(matches[3]) > 0 && parseInt(matches[3]) < 31)
+		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 13
+		&& parseInt(matches[3]) > 0 && parseInt(matches[3]) < 32)
 	{
 		input_date = dayjs(str);
 		return input_date.isValid() ? input_date : false;
 	}
 	else if ((matches = str.match(/^([01]?\d)\s*[\/\-\.]?\s*([0-3]?\d)\s*[\/\-\.]?\s*((\d{2})?\d{2})$/))
-		&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 12
-		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 31)
+		&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 13
+		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 32)
 	{
 		if (matches[3].length == 2)
 		{
@@ -82,7 +82,7 @@ function parseDate(str, options)
 	}
 	else if (options && options.format)
 	{
-		input_date = dayjs(matches, options.format);
+		input_date = dayjs(str, options.format);
 		return input_date.isValid() ? input_date : false;
 	}
 	return false;
@@ -253,7 +253,7 @@ function parseDate(str, options)
 		}]);
 	});
 	jQuery('#' + input_id + '-picker-btn').on('click', function () {
-		updateDatePicker($input);
+		updateYearPicker($input);
 		$input.trigger('update.datepicker', [{
 			viewDate: $input.data('viewdate')
 		}]);
@@ -381,7 +381,7 @@ function updateDatePicker($input)
 		}]);
 	});
 	jQuery('#' + input_id + '-picker-btn').on('click', function () {
-		updateYearPicker($input);
+		updateMonthPicker($input);
 		$input.trigger('update.datepicker', [{
 			viewDate: $input.data('viewdate')
 		}]);
@@ -448,6 +448,7 @@ jQuery.fn.datepicker = function (options) {
 		jQuery(document.head).append('<style id="datepicker-style">'
 			+ '.datepicker-popover { font-size: inherit;  }'
 			+ '.datepicker-btns .btn:hover { background-color: #e2e6ea; color: #000; }'
+			+ '.datepicker-table td button:focus { box-shadow: none !important; }'
 			+ '.datepicker-table td button:not(:disabled):hover { background-color: #6c757d !important; border-color: #6c757d !important; color: #fff; }'
 			+ '.datepicker-table td button:disabled { cursor: not-allowed; }'
 			+ '.datepicker-table td button.today { background-color: #fcf8e3; }'
@@ -485,6 +486,26 @@ jQuery.fn.datepicker = function (options) {
 	// Initialize the inputs
 	return this.each(function () {
 		var $input = jQuery(this);
+
+		// Process options
+		var input_options = jQuery.extend(true, {}, common_options);
+		var minDate = $input.attr('min') || $input.data('mindate') || common_options.minDate;
+		if (minDate && (minDate = dayjs(minDate)) && minDate.isValid())
+		{
+			input_options.minDate = minDate.startOf('date');
+		}
+		var maxDate = $input.attr('max') || $input.data('maxdate') || common_options.maxDate;
+		if (maxDate && (maxDate = dayjs(maxDate)) && maxDate.isValid())
+		{
+			input_options.maxDate = maxDate.endOf('date');
+		}
+		$input.data('datepicker-options', input_options);
+		if ($input.data('datepicker'))
+		{
+			// If datepicker is already initialized, then return
+			return this;
+		}
+		$input.data('datepicker', true);
 		var input_id = this.id;
 		var $toggles = $input.siblings().find('[data-toggle="datepicker"]:not([data-target])');
 		if (this.id)
@@ -497,20 +518,6 @@ jQuery.fn.datepicker = function (options) {
 			this.id = input_id;
 		}
 		$input.toggleClass('datepicker', true);
-
-		// Process options
-		var input_options = jQuery.extend(true, {}, common_options);
-		var minDate = $input.attr('min') || $input.data('mindate');
-		if (minDate && (minDate = dayjs(minDate)) && minDate.isValid())
-		{
-			input_options.minDate = minDate.startOf('date');
-		}
-		var maxDate = $input.attr('max') || $input.data('maxdate');
-		if (maxDate && (maxDate = dayjs(maxDate)) && maxDate.isValid())
-		{
-			input_options.maxDate = maxDate.endOf('date');
-		}
-		$input.data('datepicker-options', input_options);
 
 		var $label = jQuery('label[for="' + input_id + '"]');
 		$input.on('change', function () {
@@ -567,6 +574,12 @@ jQuery.fn.datepicker = function (options) {
 		});
 	});
 };
+
+document.addEventListener('DOMContentLoaded', function() {
+	jQuery('[data-toggle="datepicker"][data-target]').each(function () {
+		jQuery(jQuery(this).data('target')).datepicker();
+	});
+});
 
 //-------------------------------------
 }());
