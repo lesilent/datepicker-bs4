@@ -5,6 +5,7 @@
  */
 (function () {
 //-------------------------------------
+'use strict';
 
 /**
  * Default options for the current modal being displayed
@@ -47,7 +48,7 @@ function htmlEncode(str)
  */
 function parseDate(str, options)
 {
-	var input_date;
+	var input_date, matches;
 	if (typeof str == 'object' && str instanceof dayjs)
 	{
 		return (str.isValid()) ? str : false;
@@ -115,7 +116,7 @@ function parseDate(str, options)
 
 	// Build html
 	var html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
-		+ '<div class="font-weight-bold"><button id="' + input_id + '-picker-btn" class="btn dropdown-toggle">' + startDate.year() + ' - ' + endDate.year()  + '</button></div><div>'
+		+ '<div class="font-weight-bold"><button id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle">' + startDate.year() + ' - ' + endDate.year()  + '</button></div><div>'
 		+ '<a id="' + input_id + '-picker-prev-link" class="btn btn-link px-1 mx-0' + ((!options.minDate || options.minDate.isBefore(startDate, 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Previous Years"><i class="fas fa-chevron-left fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-today-link" class="btn btn-link px-1 mx-0' + (today_disabled ? ' disabled' : '') + '" href="javascript:void(0)" title="Go to Current Year"><i class="far fa-calendar-check fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-next-link" class="btn btn-link px-1 mx-0' + ((!options.maxDate || options.maxDate.isAfter(endDate, 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Next Years"><i class="fas fa-chevron-right fa-fw"></i></a>'
@@ -195,7 +196,7 @@ function parseDate(str, options)
 	);
 
 	var html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
-		+ '<div class="font-weight-bold"><button id="' + input_id + '-picker-btn" class="btn dropdown-toggle">' + viewDate.format('YYYY') + '</button></div><div>'
+		+ '<div class="font-weight-bold"><button id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle">' + viewDate.format('YYYY') + '</button></div><div>'
 		+ '<a id="' + input_id + '-picker-prev-link" class="btn btn-link px-1 mx-0' + ((!options.minDate || options.minDate.isBefore(viewDate.startOf('year'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Previous Year" data-unit="month"><i class="fas fa-chevron-left fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-today-link" class="btn btn-link px-1 mx-0' + (today_disabled ? ' disabled' : ' ') + '" href="javascript:void(0)" title="Go to Current Month"><i class="far fa-calendar-check fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-next-link" class="btn btn-link px-1 mx-0' + ((!options.maxDate || options.maxDate.isAfter(viewDate.endOf('year'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Next Year" data-unit="month"><i class="fas fa-chevron-right fa-fw"></i></a>'
@@ -279,7 +280,7 @@ function updateDatePicker($input)
 
 	// Build html
 	var html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
-		+ '<div class="font-weight-bold"><button id="' + input_id + '-picker-btn" class="btn dropdown-toggle">' + viewDate.format('MMMM YYYY') + '</button></div><div>'
+		+ '<div class="font-weight-bold"><button id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle">' + viewDate.format('MMMM YYYY') + '</button></div><div>'
 		+ '<a id="' + input_id + '-picker-prev-link" class="btn btn-link px-1 mx-0' + ((!options.minDate || options.minDate.isBefore(viewDate.startOf('month'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Previous Month" data-unit="month"><i class="fas fa-chevron-left fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-today-link" class="btn btn-link px-1 mx-0' + (today_disabled ? ' disabled' : '') + '" href="javascript:void(0)" title="Go to Today"><i class="far fa-calendar-check fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-next-link" class="btn btn-link px-1 mx-0' + ((!options.maxDate || options.maxDate.isAfter(viewDate.endOf('month'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go To Next Month" data-unit="month"><i class="fas fa-chevron-right fa-fw"></i></a>'
@@ -526,7 +527,6 @@ jQuery.fn.datepicker = function (options) {
 			var newDate = parseDate(this.value, input_options);
 			this.value = (newDate && newDate.isValid()) ? newDate.format(input_options.format) : '';
 		}).on('inserted.bs.popover', function () {
-			$body = jQuery('#' + input_id + '-popover-body');
 			jQuery('.popover').find('[data-dismiss="popover"]').on('click', function () {
 				$input.popover('hide');
 			});
