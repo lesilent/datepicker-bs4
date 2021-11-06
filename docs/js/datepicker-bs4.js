@@ -51,7 +51,7 @@ function parseDate(str, options)
 	var input_date, matches;
 	if (typeof str == 'object' && str instanceof dayjs)
 	{
-		return (str.isValid()) ? str : false;
+		return str.isValid() ? str : false;
 	}
 	str = str.replace(/^\s+|\s+$/g, '');
 	if ((matches = str.match(/^(\d{4})\s*\-\s*([01]\d)\s*\-\s*([0-3]\d)$/))
@@ -116,7 +116,7 @@ function parseDate(str, options)
 
 	// Build html
 	var html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
-		+ '<div class="font-weight-bold"><button id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle px-2">' + startDate.year() + ' - ' + endDate.year()  + '</button></div><div class="text-nowrap">'
+		+ '<div class="font-weight-bold"><button type="button" id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle">' + startDate.year() + ' - ' + endDate.year()  + '</button></div><div>'
 		+ '<a id="' + input_id + '-picker-prev-link" class="btn btn-link px-1 mx-0' + ((!options.minDate || options.minDate.isBefore(startDate, 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Previous Years"><i class="fas fa-chevron-left fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-today-link" class="btn btn-link px-1 mx-0' + (today_disabled ? ' disabled' : '') + '" href="javascript:void(0)" title="Go to Current Year"><i class="far fa-calendar-check fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-next-link" class="btn btn-link px-1 mx-0' + ((!options.maxDate || options.maxDate.isAfter(endDate, 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Next Years"><i class="fas fa-chevron-right fa-fw"></i></a>'
@@ -128,7 +128,7 @@ function parseDate(str, options)
 		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('year'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('year'), 'date')));
 		html += ((i % 5 == 0) ? '<tr>' : '')
-			+ '<td class="text-center p-0"><button class="btn btn-block px-0 '
+			+ '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 			+ ((input_date && input_date.isSame(i_date, 'year')) ? 'active btn-info'
 			: 'btn-outline-dark border-white' + (i_date.isSame(today, 'year') ? ' today' : ''))
 			+ '" ' + (disabled ? 'disabled="disabled"' : 'data-year="' + i_date.year() + '"') + '>' + i_date.year() + '</button></td>'
@@ -196,7 +196,7 @@ function parseDate(str, options)
 	);
 
 	var html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
-		+ '<div class="font-weight-bold"><button id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle px-2">' + viewDate.format('YYYY') + '</button></div><div class="text-nowrap">'
+		+ '<div class="font-weight-bold"><button type="button" id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle">' + viewDate.format('YYYY') + '</button></div><div>'
 		+ '<a id="' + input_id + '-picker-prev-link" class="btn btn-link px-1 mx-0' + ((!options.minDate || options.minDate.isBefore(viewDate.startOf('year'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Previous Year" data-unit="month"><i class="fas fa-chevron-left fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-today-link" class="btn btn-link px-1 mx-0' + (today_disabled ? ' disabled' : ' ') + '" href="javascript:void(0)" title="Go to Current Month"><i class="far fa-calendar-check fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-next-link" class="btn btn-link px-1 mx-0' + ((!options.maxDate || options.maxDate.isAfter(viewDate.endOf('year'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Next Year" data-unit="month"><i class="fas fa-chevron-right fa-fw"></i></a>'
@@ -207,7 +207,7 @@ function parseDate(str, options)
 		var i_date = viewDate.month(i);
 		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('month'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('month'), 'date')));
-		html += ((i % 3 == 0) ? '<tr>' : '') + '<td class="text-center p-0"><button class="btn btn-block px-0 '
+		html += ((i % 3 == 0) ? '<tr>' : '') + '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 			+ ((input_date && input_date.isSame(i_date, 'month')) ? 'active btn-info'
 			: 'btn-outline-dark border-white' + (i_date.isSame(today, 'month') ? ' today' : ''))
 			+ '" ' + (disabled ? 'disabled="disabled"' : 'data-date="' + i_date.format('YYYY-MM-DD"')) + '>' + i_date.format('MMM') + '</button></td>' + ((i % 3 == 2) ? '</tr>' : '');
@@ -215,7 +215,7 @@ function parseDate(str, options)
 	for (var i = 0; i < 6; i++)
 	{
 		html += ((i % 3 == 0) ? '<tr>' : '')
-			+ '<td class="p-0"><button class="btn btn-block invisible px-0" disabled="disabled">&nbsp;</button></td>'
+			+ '<td class="p-0"><button type="button" class="btn btn-block invisible px-0" disabled="disabled">&nbsp;</button></td>'
 			+ ((i % 3 == 2) ? '</tr>' : '');
 	}
 	jQuery('#' + input_id + '-picker-content').html(html).find('table button').on('click', function () {
@@ -259,7 +259,7 @@ function parseDate(str, options)
 			viewDate: $input.data('viewdate')
 		}]);
 	});
- }
+}
 
 /**
  * Update the calendar in the popover
@@ -280,7 +280,7 @@ function updateDatePicker($input)
 
 	// Build html
 	var html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
-		+ '<div class="font-weight-bold"><button id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle px-2">' + viewDate.format('MMMM YYYY') + '</button></div><div class="text-nowrap">'
+		+ '<div class="font-weight-bold"><button type="button" id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle px-2">' + viewDate.format('MMMM YYYY') + '</button></div><div class="text-nowrap">'
 		+ '<a id="' + input_id + '-picker-prev-link" class="btn btn-link px-1 mx-0' + ((!options.minDate || options.minDate.isBefore(viewDate.startOf('month'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Previous Month" data-unit="month"><i class="fas fa-chevron-left fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-today-link" class="btn btn-link px-1 mx-0' + (today_disabled ? ' disabled' : '') + '" href="javascript:void(0)" title="Go to Today"><i class="far fa-calendar-check fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-next-link" class="btn btn-link px-1 mx-0' + ((!options.maxDate || options.maxDate.isAfter(viewDate.endOf('month'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go To Next Month" data-unit="month"><i class="fas fa-chevron-right fa-fw"></i></a>'
@@ -302,7 +302,7 @@ function updateDatePicker($input)
 		i_date = startMonth.subtract(i, 'day');
 		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('date'), 'date')));
-		html += '<td class="text-center p-0"><button class="btn btn-block px-0 '
+		html += '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 			+ ((input_date && input_date.isSame(i_date, 'date')) ? 'active btn-info'
 			: 'btn-outline-secondary border-white' + (i_date.isSame(today, 'date') ? ' today' : ''))
 			+ '" ' + (disabled ? 'disabled="disabled"' : 'data-date="' + i_date.format('YYYY-MM-DD"')) + '>' + i_date.format('D') + '</button></td>';
@@ -315,7 +315,7 @@ function updateDatePicker($input)
 		i_date = viewDate.date(i);
 		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('date'), 'date')));
-		html += ((dow == 0) ? '<tr>' : '') + '<td class="text-center p-0"><button class="btn btn-block px-0 '
+		html += ((dow == 0) ? '<tr>' : '') + '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 			+ ((input_date && input_date.isSame(i_date, 'date')) ? 'active btn-info'
 			: 'btn-outline-dark border-white' + (i_date.isSame(today, 'date') ? ' today' : ''))
 			+ '" ' + (disabled ? 'disabled="disabled"' : 'data-date="' + i_date.format('YYYY-MM-DD"')) + '>' + i_date.format('D') + '</button></td>' + ((dow == 6) ? '</tr>' : '');
@@ -330,7 +330,7 @@ function updateDatePicker($input)
 			i_date = nextMonth.date(i);
 			var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
 				|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('date'), 'date')));
-			html += '<td class="text-center p-0"><button class="btn btn-block px-0 '
+			html += '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 				+ ((input_date && input_date.isSame(i_date, 'date')) ? 'active btn-info'
 				: ' btn-outline-secondary border-white' + (i_date.isSame(today, 'date') ? ' today' : ''))
 				+ '" ' + (disabled ? 'disabled="disabled"' : 'data-date="' + i_date.format('YYYY-MM-DD"')) + '>' + i_date.format('D') + '</button></td>';
@@ -343,7 +343,7 @@ function updateDatePicker($input)
 		i_date = i_date.add(1, 'day');
 		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('date'), 'date')));
-		html += ((i % 7 == 0) ? '<tr>' : '') + '<td class="text-center p-0"><button class="btn btn-block px-0 '
+		html += ((i % 7 == 0) ? '<tr>' : '') + '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 			+ ((input_date && input_date.isSame(i_date, 'date')) ? 'active btn-info'
 			: ' btn-outline-secondary border-white' + (i_date.isSame(today, 'date') ? ' today' : ''))
 			+ '" ' + (disabled ? 'disabled="disabled"' : 'data-date="' + i_date.format('YYYY-MM-DD"')) + '>' + i_date.format('D') + '</button></td>'
@@ -535,7 +535,7 @@ jQuery.fn.datepicker = function (options) {
 			html: true,
 			placement: 'bottom',
 			sanitize: false,
-			title: '<button class="close mt-n1" data-dismiss="popover">&times;</button>' + (($label.length > 0) ? $label.html() : 'Date'),
+			title: '<button type="button" class="close mt-n1" data-dismiss="popover">&times;</button>' + (($label.length > 0) ? $label.html() : 'Date'),
 			template: '<div id="' + input_id + '-picker-popover" class="popover datepicker-popover bs-popover-bottom" role="tooltip" style="width:' + input_options.popoverWidth + ';"><div class="arrow"></div><h3 class="popover-header"></h3><div id="' + input_id + '-popover-body" class="popover-body border-bottom"></div><div class="popover-footer bg-light text-right px-3 py-2 rounded-lg" hidden="hidden"><button type="button" class="btn btn-secondary btn-sm" title="Close the picker" data-dismiss="popover"><i class="fas fa-times"></i> Close</button></div></div>',
 			trigger: (($toggles.length > 0) ? 'manual' : 'click'),
 			popperConfig: {
