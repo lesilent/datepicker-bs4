@@ -487,6 +487,12 @@ jQuery.fn.datepicker = function (options) {
 	// Initialize the inputs
 	return this.each(function () {
 		var $input = jQuery(this);
+		if ($input.data('datepicker'))
+		{
+			// If datepicker is already initialized, then return
+			return this;
+		}
+		$input.data('datepicker', true);
 
 		// Process options
 		var input_options = jQuery.extend(true, {}, common_options);
@@ -501,12 +507,6 @@ jQuery.fn.datepicker = function (options) {
 			input_options.maxDate = maxDate.endOf('date');
 		}
 		$input.data('datepicker-options', input_options);
-		if ($input.data('datepicker'))
-		{
-			// If datepicker is already initialized, then return
-			return this;
-		}
-		$input.data('datepicker', true);
 		var input_id = this.id;
 		var $toggles = $input.siblings().find('[data-toggle="datepicker"]:not([data-target])');
 		if (this.id)
