@@ -525,7 +525,12 @@ jQuery.fn.datepicker = function (options) {
 			this.value = this.value.replace(/^\s+|\s+$/g, '');
 			var input_options = $input.data('datepicker-options');
 			var newDate = parseDate(this.value, input_options);
-			this.value = (newDate && newDate.isValid()) ? newDate.format(input_options.format) : '';
+			var newValue = (newDate && newDate.isValid() && !(input_options.minDate && newDate.isBefore(input_options.minDate)) && !(input_options.maxDate && newDate.isAfter(input_options.maxDate))) ? newDate.format(input_options.format) : '';
+			if (this.value != newValue)
+			{
+				this.value = newValue;
+				jQuery(this).trigger('change');
+			}
 		}).on('inserted.bs.popover', function () {
 			jQuery('.popover').find('[data-dismiss="popover"]').on('click', function () {
 				$input.popover('hide');
