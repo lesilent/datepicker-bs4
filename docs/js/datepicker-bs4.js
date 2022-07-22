@@ -477,6 +477,27 @@ jQuery.fn.datepicker = function (options) {
 	{
 		return this.each(function () {
 			var $input = jQuery(this);
+
+			// Process options
+			var input_options = jQuery.extend(true, {}, common_options);
+			var minDate = $input.attr('min') || $input.data('mindate') || common_options.minDate;
+			if (minDate && (minDate = dayjs(minDate)) && minDate.isValid())
+			{
+				input_options.minDate = minDate.startOf('date');
+			}
+			var maxDate = $input.attr('max') || $input.data('maxdate') || common_options.maxDate;
+			if (maxDate && (maxDate = dayjs(maxDate)) && maxDate.isValid())
+			{
+				input_options.maxDate = maxDate.endOf('date');
+			}
+			$input.data('datepicker-options', input_options);
+
+			var viewDate = parseDate(this.value, input_options);
+			if (viewDate)
+			{
+				// Convert value to YYYY-MM-DD format to be compatible with date type
+				this.value = viewDate.format('YYYY-MM-DD');
+			}
 			this.type = 'date';
 			jQuery('[data-toggle="datepicker"][data-target="#' + this.id + '"]').add($input.siblings().find('[data-toggle="datepicker"]')).on('click', function () {
 				$input.focus();
