@@ -501,6 +501,10 @@ jQuery.fn.datepicker = function (options) {
 			this.type = 'date';
 			jQuery('[data-toggle="datepicker"][data-target="#' + this.id + '"]').add($input.siblings().find('[data-toggle="datepicker"]')).on('click', function () {
 				$input.focus();
+				if ('showPicker' in HTMLInputElement.prototype)
+				{
+					$input[0].showPicker();
+				}
 			});
 		});
 	}
