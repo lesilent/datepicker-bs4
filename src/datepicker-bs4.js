@@ -97,7 +97,7 @@ function parseDate(str, options)
  function updateYearPicker($input)
  {
 	var input_id = $input.attr('id');
-	var options = $input.data('datepicker-options');
+	var options = $input.data('options');
 	var input_date = parseDate($input.val(), options);
 	var today = dayjs();
 	var viewDate = $input.data('viewdate') || today;
@@ -186,7 +186,7 @@ function parseDate(str, options)
  function updateMonthPicker($input)
  {
 	var input_id = $input.attr('id');
-	var options = $input.data('datepicker-options');
+	var options = $input.data('options');
 	var input_date = parseDate($input.val(), options);
 	var today = dayjs();
 	var viewDate = $input.data('viewdate') || today;
@@ -269,7 +269,7 @@ function parseDate(str, options)
 function updateDatePicker($input)
 {
 	var input_id = $input.attr('id');
-	var options = $input.data('datepicker-options');
+	var options = $input.data('options');
 	var input_date = parseDate($input.val(), options);
 	var today = dayjs();
 	var viewDate = $input.data('viewdate') || today;
@@ -403,7 +403,11 @@ jQuery.fn.datepicker = function (options) {
 	// Handle functions
 	if (typeof options == 'string')
 	{
-		var input_options = this.data('datepicker-options') || {};
+		if (this.length < 1)
+		{
+			return undefined;
+		}
+		var input_options = this.data('options') || {};
 		switch (options)
 		{
 			case 'date':
@@ -417,19 +421,45 @@ jQuery.fn.datepicker = function (options) {
 					return parseDate(this.val()) || null;
 				}
 				break;
+			case 'format':
+				if (arguments.length > 1)
+				{
+					if (arguments[1] && typeof arguments[1] == 'string')
+					{
+						input_options.format = arguments[1];
+						this.data('options', input_options);
+					}
+					else
+					{
+						console.warn('Invalid format');
+					}
+				}
+				else
+				{
+					return input_options.format;
+				}
+				break;
 			case 'minDate':
 			case 'maxDate':
 				if (arguments.length > 1)
 				{
-					var newDate = (arguments[1]) ? parseDate(arguments[1], input_options) : null;
-					if (newDate && newDate.isValid())
+					if (arguments[1])
 					{
-						input_options[options] = newDate;
-						this.data('datepicker-options', input_options);
+						var newDate = parseDate(arguments[1], input_options);
+						if (newDate && newDate.isValid())
+						{
+							input_options[options] = newDate;
+							this.data('options', input_options);
+						}
+						else
+						{
+							console.warn('Invalid ' + options);
+						}
 					}
 					else
 					{
-
+						input_options[options] = null;
+						this.data('options', input_options);
 					}
 				}
 				else
@@ -480,6 +510,11 @@ jQuery.fn.datepicker = function (options) {
 
 			// Process options
 			var input_options = jQuery.extend(true, {}, common_options);
+			var format = $input.data('format') || common_options.format;
+			if (format)
+			{
+				input_options.format = format;
+			}
 			var minDate = $input.attr('min') || $input.data('mindate') || common_options.minDate;
 			if (minDate && (minDate = dayjs(minDate)) && minDate.isValid())
 			{
@@ -490,7 +525,7 @@ jQuery.fn.datepicker = function (options) {
 			{
 				input_options.maxDate = maxDate.endOf('date');
 			}
-			$input.data('datepicker-options', input_options);
+			$input.data('options', input_options);
 
 			var viewDate = parseDate(this.value, input_options);
 			if (viewDate)
@@ -521,6 +556,11 @@ jQuery.fn.datepicker = function (options) {
 
 		// Process options
 		var input_options = jQuery.extend(true, {}, common_options);
+		var format = $input.data('format') || common_options.format;
+		if (format)
+		{
+			input_options.format = format;
+		}
 		var minDate = $input.attr('min') || $input.data('mindate') || common_options.minDate;
 		if (minDate && (minDate = dayjs(minDate)) && minDate.isValid())
 		{
@@ -531,7 +571,7 @@ jQuery.fn.datepicker = function (options) {
 		{
 			input_options.maxDate = maxDate.endOf('date');
 		}
-		$input.data('datepicker-options', input_options);
+		$input.data('options', input_options);
 		var input_id = this.id;
 		var $toggles = $input.siblings().find('[data-toggle="datepicker"]:not([data-target])');
 		if (this.id)
@@ -548,7 +588,7 @@ jQuery.fn.datepicker = function (options) {
 		var $label = jQuery('label[for="' + input_id + '"]');
 		$input.on('change', function () {
 			this.value = this.value.replace(/^\s+|\s+$/g, '');
-			var input_options = $input.data('datepicker-options');
+			var input_options = $input.data('options');
 			var newDate = parseDate(this.value, input_options);
 			var newValue = (newDate && newDate.isValid() && !(input_options.minDate && newDate.isBefore(input_options.minDate)) && !(input_options.maxDate && newDate.isAfter(input_options.maxDate))) ? newDate.format(input_options.format) : '';
 			if (this.value != newValue)
@@ -584,7 +624,7 @@ jQuery.fn.datepicker = function (options) {
 */
 			},
 			content: function () {
-				var options = $input.data('datepicker-options');
+				var options = $input.data('options');
 				var viewDate = parseDate($input.val(), options) || dayjs();
 				if (options.minDate && viewDate.isBefore(options.minDate, 'date'))
 				{
