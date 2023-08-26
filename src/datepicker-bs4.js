@@ -1,5 +1,5 @@
 /**
- * Date picker for bootstrap 4
+ * Date picker for Bootstrap 4
  *
  * https://github.com/lesilent/datepicker-bs4
  */
@@ -17,7 +17,6 @@ var settings = {
 	format: 'MM/DD/YYYY',
 	maxDate: null,
 	minDate: '1900-01-01',
-	minScreenWidth: 576,
 	popoverWidth: '19rem'
 };
 
@@ -48,7 +47,7 @@ function htmlEncode(str)
  */
 function parseDate(str, options)
 {
-	var input_date, matches;
+	var input_date = false, matches;
 	if (typeof str == 'object' && str instanceof dayjs)
 	{
 		return str.isValid() ? str : false;
@@ -59,32 +58,42 @@ function parseDate(str, options)
 		&& parseInt(matches[3]) > 0 && parseInt(matches[3]) < 32)
 	{
 		input_date = dayjs(str);
-		return input_date.isValid() ? input_date : false;
 	}
 	else if ((matches = str.match(/^([01]?\d)\s*[\/\-\.]?\s*([0-3]?\d)\s*[\/\-\.]?\s*((\d{2})?\d{2})$/))
 		&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 13
-		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 32)
+		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 32
+		&& /^MM?\s*[\/\-\.]?\s*DD?\s*[\/\-\.]?\s*YY(YY)?$/.test(options.format))
 	{
 		if (matches[3].length == 2)
 		{
 			matches[3] = Math.floor(new Date().getFullYear() / 100) * 100 - ((parseInt(matches[3]) >= 50) ? 100 : 0) + parseInt(matches[3]) ;
 		}
 		input_date = dayjs(matches[3] + '-' + ((matches[1].length > 1) ? '': '0') + matches[1] + '-' + ((matches[2].length > 1) ? '' : '0') + matches[2]);
-		if (input_date.isValid())
+	}
+	else if ((matches = str.match(/^([0-3]?\d)\s*[\/\-\.]?\s*([01]?\d)\s*[\/\-\.]?\s*((\d{2})?\d{2})$/))
+		&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 32
+		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 13
+		&& /^DD?\s*[\/\-\.]?\s*MM?\s*[\/\-\.]?\s*YY(YY)?$/.test(options.format))
+	{
+		if (matches[3].length == 2)
 		{
-			if (options &&
-				((options.minDate && input_date.isBefore(options.minDate, 'date'))
-				|| (options.maxDate && input_date.isAfter(options.maxDate, 'date'))))
-			{
-				return false;
-			}
-			return input_date;
+			matches[3] = Math.floor(new Date().getFullYear() / 100) * 100 - ((parseInt(matches[3]) >= 50) ? 100 : 0) + parseInt(matches[3]) ;
 		}
+		input_date = dayjs(matches[3] + '-' + ((matches[2].length > 1) ? '': '0') + matches[2] + '-' + ((matches[1].length > 1) ? '' : '0') + matches[1]);
 	}
 	else if (options && options.format)
 	{
 		input_date = dayjs(str, options.format);
-		return input_date.isValid() ? input_date : false;
+	}
+	if (input_date && input_date.isValid())
+	{
+		if (options &&
+			((options.minDate && input_date.isBefore(options.minDate, 'date'))
+			|| (options.maxDate && input_date.isAfter(options.maxDate, 'date'))))
+		{
+			return false;
+		}
+		return input_date;
 	}
 	return false;
 }
@@ -394,7 +403,7 @@ function updateDatePicker($input)
  */
 jQuery.fn.datepicker = function (options) {
 	// Get boostrap version
-	var bs_version = parseInt(jQuery.fn.dropdown.Constructor.VERSION.replace(/\..+$/, ''));
+	var bs_version = parseInt(((typeof bootstrap == 'object') ? bootstrap.Dropdown.VERSION : jQuery.fn.dropdown.Constructor.VERSION || '0').replace(/\..+$/, ''));
 	if (bs_version < 4)
 	{
 		console.error('Invalid bootstrap version ' + bs_version + ' detected');
@@ -408,64 +417,60 @@ jQuery.fn.datepicker = function (options) {
 			return undefined;
 		}
 		var input_options = this.data('options') || {};
+		var single_arg = (arguments.length == 1);
 		switch (options)
 		{
 			case 'date':
-				if (arguments.length > 1)
-				{
-					var newDate = (arguments[1]) ? parseDate(arguments[1], input_options) : null;
-					return this.val((newDate && newDate.isValid()) ? newDate.format(input_options.format) : '');
-				}
-				else
+				if (single_arg)
 				{
 					return parseDate(this.val()) || null;
 				}
+				else
+				{
+					var newDate = (arguments[1]) ? parseDate(arguments[1], input_options) : null;
+					this.val((newDate && newDate.isValid()) ? newDate.format(input_options.format) : '');
+				}
 				break;
 			case 'format':
-				if (arguments.length > 1)
+				if (single_arg)
 				{
-					if (arguments[1] && typeof arguments[1] == 'string')
-					{
-						input_options.format = arguments[1];
-						this.data('options', input_options);
-					}
-					else
-					{
-						console.warn('Invalid format');
-					}
+					return input_options.format;
+				}
+				else if (arguments[1] && typeof arguments[1] == 'string')
+				{
+					input_options.format = arguments[1];
+					this.data('options', input_options);
 				}
 				else
 				{
-					return input_options.format;
+					console.warn('Invalid format');
 				}
 				break;
 			case 'minDate':
 			case 'maxDate':
-				if (arguments.length > 1)
+				if (single_arg)
 				{
-					if (arguments[1])
+					return input_options[options];
+				}
+				else if (arguments[1])
+				{
+					var newDate = parseDate(arguments[1], input_options);
+					if (newDate && newDate.isValid())
 					{
-						var newDate = parseDate(arguments[1], input_options);
-						if (newDate && newDate.isValid())
-						{
-							input_options[options] = newDate;
-							this.data('options', input_options);
-						}
-						else
-						{
-							console.warn('Invalid ' + options);
-						}
+						input_options[options] = newDate;
+						this.data('options', input_options);
 					}
 					else
 					{
-						input_options[options] = null;
-						this.data('options', input_options);
+						console.warn('Invalid ' + options);
 					}
 				}
 				else
 				{
-					return input_options[options];
+					input_options[options] = null;
+					this.data('options', input_options);
 				}
+				break;
 			default:
 				break;
 		}
@@ -500,49 +505,6 @@ jQuery.fn.datepicker = function (options) {
 		options = {};
 	}
 	var common_options = jQuery.extend({}, settings, options);
-
-	// Convert to date type if screen doesn't meet the mininum width or an IOS device
-	if ((common_options.minScreenWidth && window.screen.width < common_options.minScreenWidth)
-		|| /iPad|iPhone|iPod/.test(navigator.userAgent))
-	{
-		return this.each(function () {
-			var $input = jQuery(this);
-
-			// Process options
-			var input_options = jQuery.extend(true, {}, common_options);
-			var format = $input.data('format') || common_options.format;
-			if (format)
-			{
-				input_options.format = format;
-			}
-			var minDate = $input.attr('min') || $input.data('mindate') || common_options.minDate;
-			if (minDate && (minDate = dayjs(minDate)) && minDate.isValid())
-			{
-				input_options.minDate = minDate.startOf('date');
-			}
-			var maxDate = $input.attr('max') || $input.data('maxdate') || common_options.maxDate;
-			if (maxDate && (maxDate = dayjs(maxDate)) && maxDate.isValid())
-			{
-				input_options.maxDate = maxDate.endOf('date');
-			}
-			$input.data('options', input_options);
-
-			var viewDate = parseDate(this.value, input_options);
-			if (viewDate)
-			{
-				// Convert value to YYYY-MM-DD format to be compatible with date type
-				this.value = viewDate.format('YYYY-MM-DD');
-			}
-			this.type = 'date';
-			jQuery('[data-toggle="datepicker"][data-target="#' + this.id + '"]').add($input.siblings().find('[data-toggle="datepicker"]')).on('click', function () {
-				$input.focus();
-				if ('showPicker' in HTMLInputElement.prototype)
-				{
-					$input[0].showPicker();
-				}
-			});
-		});
-	}
 
 	// Initialize the inputs
 	return this.each(function () {
@@ -583,19 +545,23 @@ jQuery.fn.datepicker = function (options) {
 			input_id = 'input-' + Math.floor(Math.random() * 1000000 + 1);
 			this.id = input_id;
 		}
-		$input.toggleClass('datepicker', true);
+		$input.addClass('datepicker');
 
 		var $label = jQuery('label[for="' + input_id + '"]');
 		$input.on('change', function () {
 			this.value = this.value.replace(/^\s+|\s+$/g, '');
 			var input_options = $input.data('options');
 			var newDate = parseDate(this.value, input_options);
-			var newValue = (newDate && newDate.isValid() && !(input_options.minDate && newDate.isBefore(input_options.minDate)) && !(input_options.maxDate && newDate.isAfter(input_options.maxDate))) ? newDate.format(input_options.format) : '';
-			if (this.value != newValue)
+			var newValue = '';
+			if (newDate && newDate.isValid() && !(input_options.minDate && newDate.isBefore(input_options.minDate)) && !(input_options.maxDate && newDate.isAfter(input_options.maxDate)))
 			{
-				this.value = newValue;
-				jQuery(this).trigger('change');
+				newValue = newDate.format(input_options.format);
 			}
+			else
+			{
+				newDate = null;
+			}
+			jQuery(this).val(newValue).datepicker('date', newDate);
 		}).on('inserted.bs.popover', function () {
 			jQuery('.popover').find('[data-dismiss="popover"]').on('click', function () {
 				$input.popover('hide');

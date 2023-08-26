@@ -1,5 +1,5 @@
 /**
- * Date picker for bootstrap 4
+ * Date picker for Bootstrap 4
  *
  * https://github.com/lesilent/datepicker-bs4
  */
@@ -17,7 +17,6 @@ var settings = {
 	format: 'MM/DD/YYYY',
 	maxDate: null,
 	minDate: '1900-01-01',
-	minScreenWidth: 576,
 	popoverWidth: '19rem'
 };
 
@@ -404,7 +403,7 @@ function updateDatePicker($input)
  */
 jQuery.fn.datepicker = function (options) {
 	// Get boostrap version
-	var bs_version = parseInt(jQuery.fn.dropdown.Constructor.VERSION.replace(/\..+$/, ''));
+	var bs_version = parseInt(((typeof bootstrap == 'object') ? bootstrap.Dropdown.VERSION : jQuery.fn.dropdown.Constructor.VERSION || '0').replace(/\..+$/, ''));
 	if (bs_version < 4)
 	{
 		console.error('Invalid bootstrap version ' + bs_version + ' detected');
@@ -507,49 +506,6 @@ jQuery.fn.datepicker = function (options) {
 	}
 	var common_options = jQuery.extend({}, settings, options);
 
-	// Convert to date type if screen doesn't meet the mininum width or an IOS device
-	if ((common_options.minScreenWidth && window.screen.width < common_options.minScreenWidth)
-		|| /iPad|iPhone|iPod/.test(navigator.userAgent))
-	{
-		return this.each(function () {
-			var $input = jQuery(this);
-
-			// Process options
-			var input_options = jQuery.extend(true, {}, common_options);
-			var format = $input.data('format') || common_options.format;
-			if (format)
-			{
-				input_options.format = format;
-			}
-			var minDate = $input.attr('min') || $input.data('mindate') || common_options.minDate;
-			if (minDate && (minDate = dayjs(minDate)) && minDate.isValid())
-			{
-				input_options.minDate = minDate.startOf('date');
-			}
-			var maxDate = $input.attr('max') || $input.data('maxdate') || common_options.maxDate;
-			if (maxDate && (maxDate = dayjs(maxDate)) && maxDate.isValid())
-			{
-				input_options.maxDate = maxDate.endOf('date');
-			}
-			$input.data('options', input_options);
-
-			var viewDate = parseDate(this.value, input_options);
-			if (viewDate)
-			{
-				// Convert value to YYYY-MM-DD format to be compatible with date type
-				this.value = viewDate.format('YYYY-MM-DD');
-			}
-			this.type = 'date';
-			jQuery('[data-toggle="datepicker"][data-target="#' + this.id + '"]').add($input.siblings().find('[data-toggle="datepicker"]')).on('click', function () {
-				$input.focus();
-				if ('showPicker' in HTMLInputElement.prototype)
-				{
-					$input[0].showPicker();
-				}
-			});
-		});
-	}
-
 	// Initialize the inputs
 	return this.each(function () {
 		var $input = jQuery(this);
@@ -589,7 +545,7 @@ jQuery.fn.datepicker = function (options) {
 			input_id = 'input-' + Math.floor(Math.random() * 1000000 + 1);
 			this.id = input_id;
 		}
-		$input.toggleClass('datepicker', true);
+		$input.addClass('datepicker');
 
 		var $label = jQuery('label[for="' + input_id + '"]');
 		$input.on('change', function () {
