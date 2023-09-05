@@ -29,21 +29,21 @@
 	<div class="form-group col-6 col-md-4 col-lg-3">
 		<label for="id">ID:</label>
 		<div class="input-group">
-		<input type="text" id="id" class="form-control" name="id" value="" maxlength="64" />
+		<input type="text" id="id" class="form-control options-control" name="id" value="" maxlength="64" />
 		<div class="input-group-append"><button type="button" id="id-reset-btn" class="btn btn-outline-secondary" disabled="disabled"><i class="far fa-times-circle"></i></button></div>
 		</div><!-- /.input-group -->
 	</div><!-- /.form-group -->
 	<div class="form-group col-6 col-md-4 col-lg-3">
 		<label for="name">Name:</label>
 		<div class="input-group">
-		<input type="text" id="name" class="form-control" name="name" value="" maxlength="64" />
+		<input type="text" id="name" class="form-control options-control" name="name" value="" maxlength="64" autocomplete="off" />
 		<div class="input-group-append"><button type="button" id="name-reset-btn" class="btn btn-outline-secondary" disabled="disabled"><i class="far fa-times-circle"></i></button></div>
 		</div><!-- /.input-group -->
 	</div><!-- /.form-group -->
 	<div class="form-group col-6 col-md-4 col-lg-3">
 		<label for="format">Format:</label>
 		<div class="input-group">
-		<input type="text" id="format" class="form-control" name="format" value="YYYY-MM-DD" readonly="readonly" />
+		<input type="text" id="format" class="form-control options-control" name="format" value="YYYY-MM-DD" readonly="readonly" />
 		<div class="input-group-append">
 		<button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></button>
 		<div id="format-dropdown-menu" class="dropdown-menu dropdown-menu-right">
@@ -57,27 +57,27 @@
 	<div class="form-group col-6 col-md-4 col-lg-3">
 		<label for="minDate">Min Date:</label>
 		<div class="input-group">
-		<input type="text" id="minDate" class="form-control" name="minDate" placeholder="YYYY-MM-DD" pattern="([12][0-9][0-9][0-9]-(1[12]|0[1-9])-(0[1-9]|[12][0-9]|3[01]))?" maxlength="10" data-format="YYYY-MM-DD" />
+		<input type="text" id="minDate" class="form-control options-control" name="minDate" placeholder="YYYY-MM-DD" pattern="([12][0-9][0-9][0-9]-(1[12]|0[1-9])-(0[1-9]|[12][0-9]|3[01]))?" maxlength="10" data-format="YYYY-MM-DD" />
 		<div class="input-group-append"><button type="button" id="minDate-reset-btn" class="btn btn-outline-secondary" disabled="disabled"><i class="far fa-times-circle"></i></button></div>
 		</div><!-- /.input-group -->
 	</div><!-- /.form-group -->
 	<div class="form-group col-6 col-md-4 col-lg-3">
 		<label for="maxDate">Max Date:</label>
 		<div class="input-group">
-		<input type="text" id="maxDate" class="form-control" name="maxDate" placeholder="YYYY-MM-DD" pattern="([12][0-9][0-9][0-9]-(1[12]|0[1-9])-(0[1-9]|[12][0-9]|3[01]))?" maxlength="10" data-format="YYYY-MM-DD" />
+		<input type="text" id="maxDate" class="form-control options-control" name="maxDate" placeholder="YYYY-MM-DD" pattern="([12][0-9][0-9][0-9]-(1[12]|0[1-9])-(0[1-9]|[12][0-9]|3[01]))?" maxlength="10" data-format="YYYY-MM-DD" />
 		<div class="input-group-append"><button type="button" id="maxDate-reset-btn" class="btn btn-outline-secondary" disabled="disabled"><i class="far fa-times-circle"></i></button></div>
 		</div><!-- /.input-group -->
 	</div><!-- /.form-group -->
 	<div class="form-group col-6 col-md-4 col-lg-3">
 		<label for="togglebtn">Toggle Button:</label>
-		<select id="togglebtn" class="form-control">
+		<select id="togglebtn" class="form-control options-control">
 		<option value="0">No</option>
 		<option value="1">Yes</option>
 		</select>
 	</div><!-- /.form-group -->
 	<div class="form-group col-6 col-md-4 col-lg-3">
 		<label for="paramtype">Options:</label>
-		<select id="paramtype" class="form-control">
+		<select id="paramtype" class="form-control options-control">
 		<option value="HTML">HTML</option>
 		<option value="JS">JavaScript</option>
 		</select>
@@ -112,10 +112,12 @@ document.addEventListener('DOMContentLoaded', function () {
 	var $picker = jQuery('#datepicker-input').datepicker();
 	var defaultFormat = $picker.datepicker('format');
 	var dateRegex = new RegExp('^' + document.getElementById('minDate').pattern.replace(/\?$/, '').replace('\\', '\\\\') + '$');
-	jQuery('#id, #name, #format, #minDate, #maxDate, #paramtype, #togglebtn').on('change', function () {
-		var attribs = '', options = {};
-		this.value = this.value.replace(/^\s+|\s+$/, '');
-		var this_value = this.value;
+	jQuery('.options-control').on('change', function () {
+		if (this.type == 'text')
+		{
+			this.value = this.value.replace(/^\s+|\s+$/, '');
+		}
+		let this_value = this.value;
 		switch (this.id)
 		{
 			case 'id':
@@ -138,11 +140,13 @@ document.addEventListener('DOMContentLoaded', function () {
 			case 'minDate':
 				if (!dateRegex.test(this_value))
 				{
-					this.value = '';
+					this_value = '';
 				}
-				document.getElementById(this.id + '-reset-btn').disabled = !(this.value.length > 0);
+				document.getElementById(this.id + '-reset-btn').disabled = !(this_value.length > 0);
+				this.value = this_value;
 				break;
 		}
+		var attribs = '', options = {};
 		jQuery.each({ format: 'format', minDate: 'min', maxDate: 'max' }, function (option, attr) {
 			var input = document.getElementById(option);
 			var value = input.value;

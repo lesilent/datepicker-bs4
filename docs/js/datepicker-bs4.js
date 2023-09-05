@@ -13,7 +13,7 @@
  * @type {object}
  * @todo add support for additional options
  */
-var settings = {
+const settings = {
 	format: 'MM/DD/YYYY',
 	maxDate: null,
 	minDate: '1900-01-01',
@@ -25,18 +25,7 @@ var settings = {
  *
  * @type {boolean}
  */
-var initialized = false;
-
-/**
- * Convert special chararacters html entities
- *
- * @param  {string} str the string to encode
- * @return {string} the encoded string
- */
-function htmlEncode(str)
-{
-	return str.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-}
+let initialized = false;
 
 /**
  * Parse a date string and return a dayjs object
@@ -47,7 +36,7 @@ function htmlEncode(str)
  */
 function parseDate(str, options)
 {
-	var input_date = false, matches;
+	let input_date = false, matches;
 	if (typeof str == 'object' && str instanceof dayjs)
 	{
 		return str.isValid() ? str : false;
@@ -101,40 +90,40 @@ function parseDate(str, options)
 /**
  * Update the year selector in the popover
  *
- * @param {object} $input  the id of the input
+ * @param {object} $input the input object
  */
  function updateYearPicker($input)
  {
-	var input_id = $input.attr('id');
-	var options = $input.data('options');
-	var input_date = parseDate($input.val(), options);
-	var today = dayjs();
-	var viewDate = $input.data('viewdate') || today;
+	const input_id = $input.attr('id');
+	const options = $input.data('options');
+	const input_date = parseDate($input.val(), options);
+	const today = dayjs();
+	let viewDate = $input.data('viewdate') || today;
 
 	// Get date for view
-	var viewYear = viewDate.year();
-	var startYear = viewYear - (viewYear % 5) - 15;
-	var startDate = dayjs(startYear + '-01-01').startOf('year');
-	var endYear = (startYear + 29);
-	var endDate = dayjs(endYear + '-12-31').endOf('year');
+	const viewYear = viewDate.year();
+	const startYear = viewYear - (viewYear % 5) - 15;
+	const startDate = dayjs(startYear + '-01-01').startOf('year');
+	const endYear = (startYear + 29);
+	const endDate = dayjs(endYear + '-12-31').endOf('year');
 
-	var today_disabled = ((options.minDate && today.isBefore(options.minDate, 'date'))
+	const today_disabled = ((options.minDate && today.isBefore(options.minDate, 'date'))
 		|| (options.maxDate && today.isAfter(options.maxDate, 'date'))
 		|| (today.year() >= startYear && today.year() <= endYear)
 	);
 
 	// Build html
-	var html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
+	let html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
 		+ '<div class="font-weight-bold"><button type="button" id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle">' + startDate.year() + ' - ' + endDate.year()  + '</button></div><div>'
 		+ '<a id="' + input_id + '-picker-prev-link" class="btn btn-link px-1 mx-0' + ((!options.minDate || options.minDate.isBefore(startDate, 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Previous Years"><i class="fas fa-chevron-left fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-today-link" class="btn btn-link px-1 mx-0' + (today_disabled ? ' disabled' : '') + '" href="javascript:void(0)" title="Go to Current Year"><i class="far fa-calendar-check fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-next-link" class="btn btn-link px-1 mx-0' + ((!options.maxDate || options.maxDate.isAfter(endDate, 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Next Years"><i class="fas fa-chevron-right fa-fw"></i></a>'
 		+ '</div></div>'
 		+ '<table class="table table-sm table-borderless text-center datepicker-table mb-1"><thead class="thead-light"><tr><th class="py-1" colspan="5"><span class="invisible">Year</span></th></tr></thead><tbody>';
-	for (var i = 0; i < (endYear - startYear + 1); i++)
+	for (let i = 0; i < (endYear - startYear + 1); i++)
 	{
-		var i_date = viewDate.year(startYear + i);
-		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('year'), 'date'))
+		const i_date = viewDate.year(startYear + i);
+		const disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('year'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('year'), 'date')));
 		html += ((i % 5 == 0) ? '<tr>' : '')
 			+ '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
@@ -190,38 +179,38 @@ function parseDate(str, options)
  /**
   * Update the month selector in the popover
   *
-  * @param {object} $input
+  * @param {object} $input the input object
   */
  function updateMonthPicker($input)
  {
-	var input_id = $input.attr('id');
-	var options = $input.data('options');
-	var input_date = parseDate($input.val(), options);
-	var today = dayjs();
-	var viewDate = $input.data('viewdate') || today;
-	var today_disabled = ((options.minDate && today.isBefore(options.minDate, 'date'))
+	const input_id = $input.attr('id');
+	const options = $input.data('options');
+	const input_date = parseDate($input.val(), options);
+	const today = dayjs();
+	let viewDate = $input.data('viewdate') || today;
+	const today_disabled = ((options.minDate && today.isBefore(options.minDate, 'date'))
 		|| (options.maxDate && today.isAfter(options.maxDate, 'date'))
 		|| today.isSame(viewDate, 'year')
 	);
 
-	var html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
+	let html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
 		+ '<div class="font-weight-bold"><button type="button" id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle">' + viewDate.format('YYYY') + '</button></div><div>'
 		+ '<a id="' + input_id + '-picker-prev-link" class="btn btn-link px-1 mx-0' + ((!options.minDate || options.minDate.isBefore(viewDate.startOf('year'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Previous Year" data-unit="month"><i class="fas fa-chevron-left fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-today-link" class="btn btn-link px-1 mx-0' + (today_disabled ? ' disabled' : ' ') + '" href="javascript:void(0)" title="Go to Current Month"><i class="far fa-calendar-check fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-next-link" class="btn btn-link px-1 mx-0' + ((!options.maxDate || options.maxDate.isAfter(viewDate.endOf('year'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Next Year" data-unit="month"><i class="fas fa-chevron-right fa-fw"></i></a>'
 		+ '</div></div>'
 		+ '<table id="d-table" class="table table-sm table-borderless text-center datepicker-table mb-1"><thead class="thead-light"><tr><th class="py-1" colspan="3"><span class="invisible">Month</th></tr></thead><tbody>';
-	for (var i = 0; i < 12; i++)
+	for (let i = 0; i < 12; i++)
 	{
-		var i_date = viewDate.month(i);
-		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('month'), 'date'))
+		const i_date = viewDate.month(i);
+		const disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('month'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('month'), 'date')));
 		html += ((i % 3 == 0) ? '<tr>' : '') + '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 			+ ((input_date && input_date.isSame(i_date, 'month')) ? 'active btn-info'
 			: 'btn-outline-dark border-white' + (i_date.isSame(today, 'month') ? ' today' : ''))
 			+ '" ' + (disabled ? 'disabled="disabled"' : 'data-date="' + i_date.format('YYYY-MM-DD"')) + '>' + i_date.format('MMM') + '</button></td>' + ((i % 3 == 2) ? '</tr>' : '');
 	}
-	for (var i = 0; i < 6; i++)
+	for (let i = 0; i < 6; i++)
 	{
 		html += ((i % 3 == 0) ? '<tr>' : '')
 			+ '<td class="p-0"><button type="button" class="btn btn-block invisible px-0" disabled="disabled">&nbsp;</button></td>'
@@ -273,22 +262,22 @@ function parseDate(str, options)
 /**
  * Update the calendar in the popover
  *
- * @param {object} $input  the input object
+ * @param {object} $input the input object
  */
 function updateDatePicker($input)
 {
-	var input_id = $input.attr('id');
-	var options = $input.data('options');
-	var input_date = parseDate($input.val(), options);
-	var today = dayjs();
-	var viewDate = $input.data('viewdate') || today;
-	var today_disabled = ((options.minDate && today.isBefore(options.minDate, 'date'))
+	const input_id = $input.attr('id');
+	const options = $input.data('options');
+	const input_date = parseDate($input.val(), options);
+	const today = dayjs();
+	let viewDate = $input.data('viewdate') || today;
+	const today_disabled = ((options.minDate && today.isBefore(options.minDate, 'date'))
 		|| (options.maxDate && today.isAfter(options.maxDate, 'date'))
 		|| today.isSame(viewDate, 'month')
 	);
 
 	// Build html
-	var html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
+	let html = '<div class="d-flex justify-content-between align-items-center datepicker-btns">'
 		+ '<div class="font-weight-bold"><button type="button" id="' + input_id + '-picker-btn" class="btn font-weight-bold dropdown-toggle px-2">' + viewDate.format('MMMM YYYY') + '</button></div><div class="text-nowrap">'
 		+ '<a id="' + input_id + '-picker-prev-link" class="btn btn-link px-1 mx-0' + ((!options.minDate || options.minDate.isBefore(viewDate.startOf('month'), 'date')) ? '' : ' disabled') + '" href="javascript:void(0)" title="Go to Previous Month" data-unit="month"><i class="fas fa-chevron-left fa-fw"></i></a>'
 		+ '<a id="' + input_id + '-picker-today-link" class="btn btn-link px-1 mx-0' + (today_disabled ? ' disabled' : '') + '" href="javascript:void(0)" title="Go to Today"><i class="far fa-calendar-check fa-fw"></i></a>'
@@ -298,18 +287,18 @@ function updateDatePicker($input)
 //		['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(function (day) {
 //			html += '<th class="py-1" scope="col" style="width:14.28%">' + day + '</th>';
 //	});
-	for (var i = 0; i < 7; i++)
+	for (let i = 0; i < 7; i++)
 	{
 		html += '<th class="py-1" scope="col" style="width:14.28%">' + viewDate.day(i).format('dd') + '</th>';
 	}
 	html += '</tr></thead><tbody><tr>';
-	var i_date;
-	var dow = 0;
-	var startMonth = viewDate.startOf('month');
-	for (var i = startMonth.day(); i > 0; i--)
+	let i_date;
+	let dow = 0;
+	const startMonth = viewDate.startOf('month');
+	for (let i = startMonth.day(); i > 0; i--)
 	{
 		i_date = startMonth.subtract(i, 'day');
-		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
+		const disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('date'), 'date')));
 		html += '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 			+ ((input_date && input_date.isSame(i_date, 'date')) ? 'active btn-info'
@@ -317,12 +306,12 @@ function updateDatePicker($input)
 			+ '" ' + (disabled ? 'disabled="disabled"' : 'data-date="' + i_date.format('YYYY-MM-DD"')) + '>' + i_date.format('D') + '</button></td>';
 		dow++;
 	}
-	var rows = 0;
-	var days_in_month = viewDate.daysInMonth();
-	for (var i = 1; i <= days_in_month; i++)
+	let rows = 0;
+	const days_in_month = viewDate.daysInMonth();
+	for (let i = 1; i <= days_in_month; i++)
 	{
 		i_date = viewDate.date(i);
-		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
+		const disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('date'), 'date')));
 		html += ((dow == 0) ? '<tr>' : '') + '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 			+ ((input_date && input_date.isSame(i_date, 'date')) ? 'active btn-info'
@@ -333,11 +322,11 @@ function updateDatePicker($input)
 	}
 	if (dow > 0)
 	{
-		var nextMonth = viewDate.add(1, 'month');
-		for (var i = 1; i <= (7 - dow); i++)
+		const nextMonth = viewDate.add(1, 'month');
+		for (let i = 1; i <= (7 - dow); i++)
 		{
 			i_date = nextMonth.date(i);
-			var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
+			const disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
 				|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('date'), 'date')));
 			html += '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 				+ ((input_date && input_date.isSame(i_date, 'date')) ? 'active btn-info'
@@ -347,10 +336,10 @@ function updateDatePicker($input)
 		html += '</tr>';
 		rows++;
 	}
-	for (var i = 0; i < ((6- rows) * 7); i++)
+	for (let i = 0; i < ((6- rows) * 7); i++)
 	{
 		i_date = i_date.add(1, 'day');
-		var disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
+		const disabled = ((options.minDate && options.minDate.isAfter(i_date.endOf('date'), 'date'))
 			|| (options.maxDate && options.maxDate.isBefore(i_date.startOf('date'), 'date')));
 		html += ((i % 7 == 0) ? '<tr>' : '') + '<td class="text-center p-0"><button type="button" class="btn btn-block px-0 '
 			+ ((input_date && input_date.isSame(i_date, 'date')) ? 'active btn-info'
@@ -360,7 +349,7 @@ function updateDatePicker($input)
 	}
 	html += '</tbody></table>';
 	jQuery('#' + input_id + '-picker-content').html(html).find('table button').on('click', function () {
-		var newDate = dayjs(jQuery(this).data('date'));
+		const newDate = dayjs(jQuery(this).data('date'));
 		$input.val(newDate.format(options.format)).popover('hide').trigger('change');
 	});
 	jQuery('#' + input_id + '-picker-prev-link').on('click', function () {
@@ -403,7 +392,7 @@ function updateDatePicker($input)
  */
 jQuery.fn.datepicker = function (options) {
 	// Get boostrap version
-	var bs_version = parseInt(((typeof bootstrap == 'object') ? bootstrap.Dropdown.VERSION : jQuery.fn.dropdown.Constructor.VERSION || '0').replace(/\..+$/, ''));
+	const bs_version = parseInt(((typeof bootstrap == 'object') ? bootstrap.Dropdown.VERSION : jQuery.fn.dropdown.Constructor.VERSION || '0').replace(/\..+$/, ''));
 	if (bs_version < 4)
 	{
 		console.error('Invalid bootstrap version ' + bs_version + ' detected');
@@ -416,8 +405,8 @@ jQuery.fn.datepicker = function (options) {
 		{
 			return undefined;
 		}
-		var input_options = this.data('options') || {};
-		var single_arg = (arguments.length == 1);
+		let input_options = this.data('options') || {};
+		const single_arg = (arguments.length == 1);
 		switch (options)
 		{
 			case 'date':
@@ -427,7 +416,7 @@ jQuery.fn.datepicker = function (options) {
 				}
 				else
 				{
-					var newDate = (arguments[1]) ? parseDate(arguments[1], input_options) : null;
+					const newDate = (arguments[1]) ? parseDate(arguments[1], input_options) : null;
 					this.val((newDate && newDate.isValid()) ? newDate.format(input_options.format) : '');
 				}
 				break;
@@ -454,7 +443,7 @@ jQuery.fn.datepicker = function (options) {
 				}
 				else if (arguments[1])
 				{
-					var newDate = parseDate(arguments[1], input_options);
+					const newDate = parseDate(arguments[1], input_options);
 					if (newDate && newDate.isValid())
 					{
 						input_options[options] = newDate;
@@ -504,11 +493,11 @@ jQuery.fn.datepicker = function (options) {
 	{
 		options = {};
 	}
-	var common_options = jQuery.extend({}, settings, options);
+	const common_options = jQuery.extend({}, settings, options);
 
 	// Initialize the inputs
 	return this.each(function () {
-		var $input = jQuery(this);
+		const $input = jQuery(this);
 		if ($input.data('datepicker'))
 		{
 			// If datepicker is already initialized, then return
@@ -517,25 +506,25 @@ jQuery.fn.datepicker = function (options) {
 		$input.data('datepicker', true);
 
 		// Process options
-		var input_options = jQuery.extend(true, {}, common_options);
-		var format = $input.data('format') || common_options.format;
+		let input_options = jQuery.extend(true, {}, common_options);
+		const format = $input.data('format') || common_options.format;
 		if (format)
 		{
 			input_options.format = format;
 		}
-		var minDate = $input.attr('min') || $input.data('mindate') || common_options.minDate;
+		let minDate = $input.attr('min') || $input.data('mindate') || common_options.minDate;
 		if (minDate && (minDate = dayjs(minDate)) && minDate.isValid())
 		{
 			input_options.minDate = minDate.startOf('date');
 		}
-		var maxDate = $input.attr('max') || $input.data('maxdate') || common_options.maxDate;
+		let maxDate = $input.attr('max') || $input.data('maxdate') || common_options.maxDate;
 		if (maxDate && (maxDate = dayjs(maxDate)) && maxDate.isValid())
 		{
 			input_options.maxDate = maxDate.endOf('date');
 		}
 		$input.data('options', input_options);
-		var input_id = this.id;
-		var $toggles = $input.siblings().find('[data-toggle="datepicker"]:not([data-target])');
+		let input_id = this.id;
+		let $toggles = $input.siblings().find('[data-toggle="datepicker"]:not([data-target])');
 		if (this.id)
 		{
 			$toggles = $toggles.add('[data-toggle="datepicker"][data-target="#' + this.id + '"]');
@@ -547,12 +536,12 @@ jQuery.fn.datepicker = function (options) {
 		}
 		$input.addClass('datepicker');
 
-		var $label = jQuery('label[for="' + input_id + '"]');
+		const $label = jQuery('label[for="' + input_id + '"]');
 		$input.on('change', function () {
 			this.value = this.value.replace(/^\s+|\s+$/g, '');
-			var input_options = $input.data('options');
-			var newDate = parseDate(this.value, input_options);
-			var newValue = '';
+			const input_options = $input.data('options');
+			let newDate = parseDate(this.value, input_options);
+			let newValue = '';
 			if (newDate && newDate.isValid() && !(input_options.minDate && newDate.isBefore(input_options.minDate)) && !(input_options.maxDate && newDate.isAfter(input_options.maxDate)))
 			{
 				newValue = newDate.format(input_options.format);
@@ -590,8 +579,8 @@ jQuery.fn.datepicker = function (options) {
 */
 			},
 			content: function () {
-				var options = $input.data('options');
-				var viewDate = parseDate($input.val(), options) || dayjs();
+				const options = $input.data('options');
+				let viewDate = parseDate($input.val(), options) || dayjs();
 				if (options.minDate && viewDate.isBefore(options.minDate, 'date'))
 				{
 					viewDate = options.minDate;
