@@ -480,6 +480,7 @@ jQuery.fn.datepicker = function (options) {
 			+ '@media (prefers-color-scheme: dark) {'
 			+ '.datepicker-popover { background-color: #000000; border-color: #ffffff; color: #dee2e6; }'
 			+ '.datepicker-popover .popover-header { background-color: #343a40; color: #ffffff; }'
+			+ '.datepicker-popover .popover-header .close { filter: invert(1) grayscale(1) brightness(2); }'
 			+ '.datepicker-btns button.btn { color: #ffffff; }'
 			+ '.datepicker-btns a.btn { color: #0d6efd; }'
 			+ '.datepicker-btns .btn:hover { background-color: #6c757d; color: #ffffff; }'
