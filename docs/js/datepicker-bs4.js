@@ -472,11 +472,22 @@ jQuery.fn.datepicker = function (options) {
 		initialized = true;
 		jQuery(document.head).append('<style id="datepicker-style">'
 			+ '.datepicker-popover { font-size: inherit;  }'
-			+ '.datepicker-btns .btn:hover { background-color: #e2e6ea; color: #000; }'
+			+ '.datepicker-btns .btn:hover { background-color: #e2e6ea; color: #000000; }'
 			+ '.datepicker-table td button:focus { box-shadow: none !important; }'
 			+ '.datepicker-table td button:not(:disabled):hover { background-color: #6c757d !important; border-color: #6c757d !important; color: #fff; }'
 			+ '.datepicker-table td button:disabled { cursor: not-allowed; }'
 			+ '.datepicker-table td button.today { background-color: #fcf8e3; }'
+			+ '@media (prefers-color-scheme: dark) {'
+			+ '.datepicker-popover { background-color: #000000; border-color: #ffffff; color: #dee2e6; }'
+			+ '.datepicker-popover .popover-header { background-color: #343a40; color: #ffffff; }'
+			+ '.datepicker-btns button.btn { color: #ffffff; }'
+			+ '.datepicker-btns a.btn { color: #0d6efd; }'
+			+ '.datepicker-btns .btn:hover { background-color: #6c757d; color: #ffffff; }'
+			+ '.datepicker-table .thead-light th { background-color: #212529; color: #ffffff; }'
+			+ '.datepicker-table .btn-outline-dark { color: #ffffff; }'
+			+ '.datepicker-table .border-white { border-color: transparent !important; }'
+			+ '.datepicker-table td button.today { background-color: #332701; color: #ffda6a; }'
+			+ '}'
 			+ '</style>');
 
 		// Make popovers close when clicked outside of them
