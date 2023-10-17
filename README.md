@@ -46,6 +46,8 @@ jQuery('#birth_date').datepicker();
 | `maxDate` | `null` | The maximum allowed date in YYYY-MM-DD format. This can also be specified using a "max" attribute on the input tag. |
 | `minDate` | `1900-01-01` | The minimum allowed date in YYYY-MM-DD format. This can also be specified using a "min" attribute on the input tag. |
 | `popoverWidth` | `19rem` | Width of the Bootstrap popover. |
+| `theme` | `null` | The visual theme to apply to the picker. Valid values include null (for auto), "dark", or "light". When auto, the theme is dependent on the browser's configured mode/theme. |
+
 
 ## Demo
 
