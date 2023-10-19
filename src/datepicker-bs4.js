@@ -18,7 +18,7 @@ const settings = {
 	maxDate: null,
 	minDate: '1900-01-01',
 	popoverWidth: '19rem',
-	theme: null
+	theme: 'light'
 };
 
 /**
@@ -134,9 +134,8 @@ function parseDate(str, options)
 			+ ((i % 5 == 4) ? '</tr>' : '');
 	}
 	html += '</table>';
-	const theme = options.theme || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '');
 	const $content = jQuery('#' + input_id + '-picker-content');
-	$content.parents('.datepicker-popover').attr('data-theme', theme);
+	$content.parents('.datepicker-popover').attr('data-theme', (options.theme == 'auto') ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '') : options.theme);
 	$content.html(html).find('table button').on('click', function () {
 		viewDate = viewDate.year(jQuery(this).data('year'));
 		$input.data('viewdate', viewDate);
@@ -220,9 +219,8 @@ function parseDate(str, options)
 			+ '<td class="p-0"><button type="button" class="btn btn-block invisible px-0" disabled="disabled">&nbsp;</button></td>'
 			+ ((i % 3 == 2) ? '</tr>' : '');
 	}
-	const theme = options.theme || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '');
 	const $content = jQuery('#' + input_id + '-picker-content');
-	$content.parents('.datepicker-popover').attr('data-theme', theme);
+	$content.parents('.datepicker-popover').attr('data-theme', (options.theme == 'auto') ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '') : options.theme);
 	$content.html(html).find('table button').on('click', function () {
 		viewDate = dayjs(jQuery(this).data('date'));
 		$input.data('viewdate', viewDate);
@@ -355,9 +353,8 @@ function updateDatePicker($input)
 			+ ((i % 7 == 6) ? '</tr>' : '');
 	}
 	html += '</tbody></table>';
-	const theme = options.theme || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '');
 	const $content = jQuery('#' + input_id + '-picker-content');
-	$content.parents('.datepicker-popover').attr('data-theme', theme);
+	$content.parents('.datepicker-popover').attr('data-theme', (options.theme == 'auto') ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '') : options.theme);
 	$content.html(html).find('table button').on('click', function () {
 		const newDate = dayjs(jQuery(this).data('date'));
 		$input.val(newDate.format(options.format)).popover('hide').trigger('change');
@@ -475,7 +472,7 @@ jQuery.fn.datepicker = function (options) {
 				{
 					return input_options.theme;
 				}
-				else if (arguments[1] === null || (arguments[1] && typeof arguments[1] == 'string'))
+				else if (arguments[1] === null || typeof arguments[1] == 'string')
 				{
 					input_options.theme = arguments[1];
 					this.data('options', input_options);
