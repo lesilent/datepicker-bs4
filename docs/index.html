@@ -8,7 +8,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css" integrity="sha512-rt/SrQ4UNIaGfDyEXZtNcyWvQeOq0QLygHluFQcSjaGB04IxWhal71tKuzP6K8eYXYB6vJV4pHkXcmFGGQ1/0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js" integrity="sha512-igl8WEUuas9k5dtnhKqyyld6TzzRjvMqLC79jkgT3z02FvJyHAuUtyemm/P/jYSne1xwFI06ezQxEwweaiV7VA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.4/dayjs.min.js" integrity="sha512-Ot7ArUEhJDU0cwoBNNnWe487kjL5wAOsIYig8llY/l0P2TUFwgsAHVmrZMHsT8NGo+HwkjTJsNErS6QqIkBxDw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer=""defer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js" integrity="sha512-FwNWaxyfy2XlEINoSnZh1JQ5TRRtGow0D6XcmAWmYCRgvqOUTnzCxPc9uF35u5ZEpirk1uhlPVA19tflhvnW1g==" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/plugin/customParseFormat.min.js" integrity="sha512-FM59hRKwY7JfAluyciYEi3QahhG/wPBo6Yjv6SaPsh061nFDVSukJlpN+4Ow5zgNyuDKkP3deru35PHOEncwsw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
 <script src="js/datepicker-bs4.js?" defer="defer"></script>
 <style>
@@ -58,14 +59,14 @@
 	<div class="form-group col-6 col-md-4 col-lg-3">
 		<label for="minDate">Min Date:</label>
 		<div class="input-group">
-		<input type="text" id="minDate" class="form-control options-control" name="minDate" placeholder="YYYY-MM-DD" pattern="([12][0-9][0-9][0-9]-(1[12]|0[1-9])-(0[1-9]|[12][0-9]|3[01]))?" maxlength="10" data-format="YYYY-MM-DD" />
+		<input type="text" id="minDate" class="form-control options-control" name="minDate" placeholder="YYYY-MM-DD" maxlength="10" data-format="YYYY-MM-DD" />
 		<div class="input-group-append"><button type="button" id="minDate-reset-btn" class="btn btn-outline-secondary reset-btn" disabled="disabled" title="Reset Option"><i class="far fa-times-circle"></i></button></div>
 		</div><!-- /.input-group -->
 	</div><!-- /.form-group -->
 	<div class="form-group col-6 col-md-4 col-lg-3">
 		<label for="maxDate">Max Date:</label>
 		<div class="input-group">
-		<input type="text" id="maxDate" class="form-control options-control" name="maxDate" placeholder="YYYY-MM-DD" pattern="([12][0-9][0-9][0-9]-(1[12]|0[1-9])-(0[1-9]|[12][0-9]|3[01]))?" maxlength="10" data-format="YYYY-MM-DD" />
+		<input type="text" id="maxDate" class="form-control options-control" name="maxDate" placeholder="YYYY-MM-DD" maxlength="10" data-format="YYYY-MM-DD" />
 		<div class="input-group-append"><button type="button" id="maxDate-reset-btn" class="btn btn-outline-secondary reset-btn" disabled="disabled" title="Reset Option"><i class="far fa-times-circle"></i></button></div>
 		</div><!-- /.input-group -->
 	</div><!-- /.form-group -->
@@ -109,7 +110,7 @@
 	</form>
 </div><!-- /.list-group-item -->
 <div class="list-group-item bg-light font-weight-bolder">HTML</div>
-<div class="list-group-item"><pre class="mb-0"><code id="datepicker-html"><span class="datepicker-input-group d-none">&lt;div class=&quot;input-group&quot;&gt;</span>
+<div class="list-group-item"><pre class="mb-0" tabindex="-1"><code id="datepicker-html"><span class="datepicker-input-group d-none">&lt;div class=&quot;input-group&quot;&gt;</span>
 <span id="datepicker-indent" class="d-none">  </span>&lt;input type=&quot;text&quot;<span id="datepicker-id"></span><span id="datepicker-name"></span> class=&quot;form-control datepicker-bs4&quot;<span id="datepicker-attribs"></span> /&gt;
     <span class="datepicker-input-group d-none">&lt;div class=&quot;input-group-append&quot;&gt;
       &lt;button type=&quot;button&quot; class=&quot;btn btn-outline-secondary&quot; data-toggle=&quot;datepicker&quot;<span id="datepicker-target"></span>&gt;&lt;i class=&quot;far fa-calendar-alt&quot;&gt;&lt;/i&gt;&lt;/button&gt;
@@ -122,11 +123,19 @@
 </div><!-- /.container -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+	// Load Day.js plugins
+	['custom'].forEach(function (format) {
+		const plugin = 'dayjs_plugin_customFormat';
+		if (plugin in window)
+		{
+			dayjs.extend(window[plugin]);
+		}
+	});
+
 	jQuery('#minDate, #maxDate').datepicker();
 	const $picker = jQuery('#datepicker-input').datepicker();
 	const defaultFormat = $picker.datepicker('format');
 	const defaultTheme = $picker.datepicker('theme') || '';
-	const dateRegex = new RegExp('^' + document.getElementById('minDate').pattern.replace(/\?$/, '').replace('\\', '\\\\') + '$');
 	jQuery('.options-control').on('change', function () {
 		if (this.type == 'text')
 		{
@@ -153,10 +162,8 @@ document.addEventListener('DOMContentLoaded', function () {
 				break;
 			case 'maxDate':
 			case 'minDate':
-				if (!dateRegex.test(this_value))
-				{
-					this_value = '';
-				}
+				var pickedDate = jQuery(this).datepicker('date');
+				this_value = (pickedDate) ? pickedDate.format('YYYY-MM-DD') : '';
 				document.getElementById(this.id + '-reset-btn').disabled = !(this_value.length > 0);
 				this.value = this_value;
 				break;

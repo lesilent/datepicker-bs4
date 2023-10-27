@@ -38,54 +38,52 @@ let initialized = false;
 function parseDate(str, options)
 {
 	let input_date = false, matches;
-	if (typeof str == 'object' && str instanceof dayjs)
+	if (typeof str == 'string')
 	{
-		return str.isValid() ? str : false;
+		str = str.replace(/^\s+|\s+$/g, '');
+		if ((matches = str.match(/^(\d{4})\s*\-\s*([01]\d)\s*\-\s*([0-3]\d)$/))
+			&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 13
+			&& parseInt(matches[3]) > 0 && parseInt(matches[3]) < 32)
+		{
+			input_date = dayjs(str);
+		}
+		else if ((matches = str.match(/^([01]?\d)\s*[\/\-\.]?\s*([0-3]?\d)\s*[\/\-\.]?\s*((\d{2})?\d{2})$/))
+			&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 13
+			&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 32
+			&& /^MM?\s*[\/\-\.]?\s*DD?\s*[\/\-\.]?\s*YY(YY)?$/.test(options.format))
+		{
+			if (matches[3].length == 2)
+			{
+				matches[3] = Math.floor(new Date().getFullYear() / 100) * 100 - ((parseInt(matches[3]) >= 50) ? 100 : 0) + parseInt(matches[3]) ;
+			}
+			input_date = dayjs(matches[3] + '-' + ((matches[1].length > 1) ? '': '0') + matches[1] + '-' + ((matches[2].length > 1) ? '' : '0') + matches[2]);
+		}
+		else if ((matches = str.match(/^([0-3]?\d)\s*[\/\-\.]?\s*([01]?\d)\s*[\/\-\.]?\s*((\d{2})?\d{2})$/))
+			&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 32
+			&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 13
+			&& /^DD?\s*[\/\-\.]?\s*MM?\s*[\/\-\.]?\s*YY(YY)?$/.test(options.format))
+		{
+			if (matches[3].length == 2)
+			{
+				matches[3] = Math.floor(new Date().getFullYear() / 100) * 100 - ((parseInt(matches[3]) >= 50) ? 100 : 0) + parseInt(matches[3]) ;
+			}
+			input_date = dayjs(matches[3] + '-' + ((matches[2].length > 1) ? '': '0') + matches[2] + '-' + ((matches[1].length > 1) ? '' : '0') + matches[1]);
+		}
+		else
+		{
+			input_date = (options && options.format)
+				? dayjs(str, options.format)
+				: dayjs(str);
+		}
 	}
-	str = str.replace(/^\s+|\s+$/g, '');
-	if ((matches = str.match(/^(\d{4})\s*\-\s*([01]\d)\s*\-\s*([0-3]\d)$/))
-		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 13
-		&& parseInt(matches[3]) > 0 && parseInt(matches[3]) < 32)
+	else
 	{
 		input_date = dayjs(str);
 	}
-	else if ((matches = str.match(/^([01]?\d)\s*[\/\-\.]?\s*([0-3]?\d)\s*[\/\-\.]?\s*((\d{2})?\d{2})$/))
-		&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 13
-		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 32
-		&& /^MM?\s*[\/\-\.]?\s*DD?\s*[\/\-\.]?\s*YY(YY)?$/.test(options.format))
-	{
-		if (matches[3].length == 2)
-		{
-			matches[3] = Math.floor(new Date().getFullYear() / 100) * 100 - ((parseInt(matches[3]) >= 50) ? 100 : 0) + parseInt(matches[3]) ;
-		}
-		input_date = dayjs(matches[3] + '-' + ((matches[1].length > 1) ? '': '0') + matches[1] + '-' + ((matches[2].length > 1) ? '' : '0') + matches[2]);
-	}
-	else if ((matches = str.match(/^([0-3]?\d)\s*[\/\-\.]?\s*([01]?\d)\s*[\/\-\.]?\s*((\d{2})?\d{2})$/))
-		&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 32
-		&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 13
-		&& /^DD?\s*[\/\-\.]?\s*MM?\s*[\/\-\.]?\s*YY(YY)?$/.test(options.format))
-	{
-		if (matches[3].length == 2)
-		{
-			matches[3] = Math.floor(new Date().getFullYear() / 100) * 100 - ((parseInt(matches[3]) >= 50) ? 100 : 0) + parseInt(matches[3]) ;
-		}
-		input_date = dayjs(matches[3] + '-' + ((matches[2].length > 1) ? '': '0') + matches[2] + '-' + ((matches[1].length > 1) ? '' : '0') + matches[1]);
-	}
-	else if (options && options.format)
-	{
-		input_date = dayjs(str, options.format);
-	}
-	if (input_date && input_date.isValid())
-	{
-		if (options &&
-			((options.minDate && input_date.isBefore(options.minDate, 'date'))
-			|| (options.maxDate && input_date.isAfter(options.maxDate, 'date'))))
-		{
-			return false;
-		}
-		return input_date;
-	}
-	return false;
+	return (input_date && input_date.isValid() && !(options &&
+		((options.minDate && input_date.isBefore(options.minDate, 'date'))
+		|| (options.maxDate && input_date.isAfter(options.maxDate, 'date')))))
+		? input_date : false;
 }
 
 /**
@@ -419,7 +417,7 @@ jQuery.fn.datepicker = function (options) {
 			case 'date':
 				if (single_arg)
 				{
-					return parseDate(this.val()) || null;
+					return parseDate(this.val(), input_options) || null;
 				}
 				else
 				{
@@ -450,7 +448,7 @@ jQuery.fn.datepicker = function (options) {
 				}
 				else if (arguments[1])
 				{
-					const newDate = parseDate(arguments[1], input_options);
+					const newDate = parseDate(arguments[1]);
 					if (newDate && newDate.isValid())
 					{
 						input_options[options] = newDate;
@@ -576,23 +574,23 @@ jQuery.fn.datepicker = function (options) {
 		const $label = jQuery('label[for="' + input_id + '"]');
 		$input.on('change', function () {
 			this.value = this.value.replace(/^\s+|\s+$/g, '');
-			const input_options = $input.data('options');
-			let newDate = parseDate(this.value, input_options);
+			const options = $input.data('options');
+			let newDate = parseDate(this.value, options);
 			let newValue = '';
-			if (newDate && newDate.isValid() && !(input_options.minDate && newDate.isBefore(input_options.minDate)) && !(input_options.maxDate && newDate.isAfter(input_options.maxDate)))
+			if (newDate && newDate.isValid() && !(options.minDate && newDate.isBefore(options.minDate, 'date')) && !(options.maxDate && newDate.isAfter(options.maxDate, 'date')))
 			{
-				newValue = newDate.format(input_options.format);
+				newValue = newDate.format(options.format);
 			}
 			else
 			{
 				newDate = null;
 			}
-			jQuery(this).val(newValue).datepicker('date', newDate);
+			this.value = newValue;
 		}).on('inserted.bs.popover', function () {
 			jQuery('.popover').find('[data-dismiss="popover"]').on('click', function () {
 				$input.popover('hide');
 			});
-			updateDatePicker($input, input_options);
+			updateDatePicker($input);
 		}).popover({
 			html: true,
 			placement: 'bottom',
