@@ -13,11 +13,12 @@
  * @type {object}
  * @todo add support for additional options
  */
-const settings = {
+const defaults = {
 	format: 'MM/DD/YYYY',
 	maxDate: null,
 	minDate: '1900-01-01',
 	popoverWidth: '19rem',
+	startView: 'day',
 	theme: 'light'
 };
 
@@ -464,20 +465,20 @@ jQuery.fn.datepicker = function (options) {
 					input_options[options] = null;
 					this.data('options', input_options);
 				}
-				break;
+			case 'startView':
 			case 'theme':
 				if (single_arg)
 				{
-					return input_options.theme;
+					return input_options[options];
 				}
 				else if (arguments[1] === null || typeof arguments[1] == 'string')
 				{
-					input_options.theme = arguments[1];
+					input_options[options] = arguments[1];
 					this.data('options', input_options);
 				}
 				else
 				{
-					console.warn('Invalid theme');
+					console.warn('Invalid ' + options);
 				}
 				break;
 			default:
@@ -491,8 +492,9 @@ jQuery.fn.datepicker = function (options) {
 	{
 		initialized = true;
 		jQuery(document.head).append('<style id="datepicker-style">'
-			+ '.datepicker-popover { font-size: inherit;  }'
+			+ '.datepicker-popover { font-size: 1rem !important; }'
 			+ '.datepicker-btns .btn:hover { background-color: #e2e6ea; color: #000000; }'
+			+ '.datepicker-table { font-size: inherit; }'
 			+ '.datepicker-table td button:focus { box-shadow: none !important; }'
 			+ '.datepicker-table td button:not(:disabled):hover { background-color: #6c757d !important; border-color: #6c757d !important; color: #fff; }'
 			+ '.datepicker-table td button:disabled { cursor: not-allowed; }'
@@ -523,7 +525,13 @@ jQuery.fn.datepicker = function (options) {
 	{
 		options = {};
 	}
-	const common_options = jQuery.extend({}, settings, options);
+	const common_options = jQuery.extend({}, defaults, options);
+	['minDate', 'maxDate'].forEach(function (option) {
+		if (common_options[option])
+		{
+			common_options[option] = parseDate(common_options[option]);
+		}
+	});
 
 	// Initialize the inputs
 	return this.each(function () {
@@ -551,6 +559,11 @@ jQuery.fn.datepicker = function (options) {
 		if (maxDate && (maxDate = dayjs(maxDate)) && maxDate.isValid())
 		{
 			input_options.maxDate = maxDate.endOf('date');
+		}
+		const startView = $input.data('startview') || common_options.startView;
+		if (startView)
+		{
+			input_options.startView = startView;
 		}
 		const theme = $input.data('theme') || common_options.theme;
 		if (theme)
@@ -590,7 +603,13 @@ jQuery.fn.datepicker = function (options) {
 			jQuery('.popover').find('[data-dismiss="popover"]').on('click', function () {
 				$input.popover('hide');
 			});
-			updateDatePicker($input);
+			const options = $input.data('options');
+			switch (options.startView)
+			{
+				case 'year': updateYearPicker($input); break;
+				case 'month': updateMonthPicker($input); break;
+				default: updateDatePicker($input);
+			}
 		}).popover({
 			html: true,
 			placement: 'bottom',
