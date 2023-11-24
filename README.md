@@ -50,6 +50,13 @@ jQuery('#birth_date').datepicker();
 | `startView` | `day` | The view the picker should show when opened. Valid values include "year", "month", or "day". Useful for date-of-birth pickers. |
 | `theme` | `light` | The visual theme to apply to the picker. Valid values include "light", "dark", or "auto". When "auto", the theme is dependent on the browser's configured mode/theme. |
 
+### Defaults
+
+The default plugin options can be overridden so that they're applied to all pickers.
+
+```javascript
+jQuery.fn.datepicker.theme = 'auto';
+```
 
 ## Demo
 

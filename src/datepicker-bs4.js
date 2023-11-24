@@ -8,21 +8,6 @@
 'use strict';
 
 /**
- * Default options for the current modal being displayed
- *
- * @type {object}
- * @todo add support for additional options
- */
-const defaults = {
-	format: 'MM/DD/YYYY',
-	maxDate: null,
-	minDate: '1900-01-01',
-	popoverWidth: '19rem',
-	startView: 'day',
-	theme: 'light'
-};
-
-/**
  * Flag for whether plugin has been initialized
  *
  * @type {boolean}
@@ -525,7 +510,7 @@ jQuery.fn.datepicker = function (options) {
 	{
 		options = {};
 	}
-	const common_options = jQuery.extend({}, defaults, options);
+	const common_options = jQuery.extend({}, jQuery.fn.datepicker.defaults, options);
 	['minDate', 'maxDate'].forEach(function (option) {
 		if (common_options[option])
 		{
@@ -654,6 +639,23 @@ jQuery.fn.datepicker = function (options) {
 	});
 };
 
+/**
+ * Default options
+ *
+ * @type {object}
+ */
+jQuery.fn.datepicker.defaults = {
+	format: 'MM/DD/YYYY',
+	maxDate: null,
+	minDate: '1900-01-01',
+	popoverWidth: '19rem',
+	startView: 'day',
+	theme: 'light'
+};
+
+/*
+ * Initialize datepickers
+ */
 document.addEventListener('DOMContentLoaded', function() {
 	jQuery('[data-toggle="datepicker"][data-target]').each(function () {
 		jQuery(jQuery(this).data('target')).datepicker();
