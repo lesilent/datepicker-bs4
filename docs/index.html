@@ -82,14 +82,14 @@
 		</div><!-- /.input-group -->
 	</div><!-- /.form-group -->
 	<div class="form-group col-6 col-md-4 col-lg-3">
-		<label for="theme">Theme:</label>
+		<label for="scheme">Scheme:</label>
 		<div class="input-group">
-		<select id="theme" class="form-control options-control" name="theme">
+		<select id="scheme" class="form-control options-control" name="scheme">
 		<option value="">light</option>
 		<option value="dark">dark</option>
 		<option value="auto">auto</option>
 		</select>
-		<div class="input-group-append"><button type="button" id="theme-reset-btn" class="btn btn-outline-secondary reset-btn" disabled="disabled" title="Reset Theme"><i class="far fa-times-circle"></i></button></div>
+		<div class="input-group-append"><button type="button" id="scheme-reset-btn" class="btn btn-outline-secondary reset-btn" disabled="disabled" title="Reset Scheme"><i class="far fa-times-circle"></i></button></div>
 		</div><!-- /.input-group -->
 	</div><!-- /.form-group -->
 	<div class="form-group col-6 col-md-4 col-lg-3">
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	const $picker = jQuery('#datepicker-input').datepicker();
 	const defaultFormat = $picker.datepicker('format');
 	const defaultStartView = $picker.datepicker('startView') || '';
-	const defaultTheme = $picker.datepicker('theme') || '';
+	const defaultScheme = $picker.datepicker('scheme') || '';
 	jQuery('.options-control').on('change', function () {
 		if (this.type == 'text')
 		{
@@ -182,19 +182,19 @@ document.addEventListener('DOMContentLoaded', function () {
 			case 'startView':
 				document.getElementById('startView-reset-btn').disabled = !(this_value.length > 0);
 				break;
-			case 'theme':
-				document.getElementById('theme-reset-btn').disabled = !(this_value.length > 0);
+			case 'scheme':
+				document.getElementById('scheme-reset-btn').disabled = !(this_value.length > 0);
 				break;
 		}
 		let attribs = '', options = {};
-		jQuery.each({ format: 'format', minDate: 'min', maxDate: 'max', startView: 'startview', theme: 'theme' }, function (option, attr) {
+		jQuery.each({ format: 'format', minDate: 'min', maxDate: 'max', startView: 'startview', scheme: 'scheme' }, function (option, attr) {
 			const input = document.getElementById(option);
 			const value = input.value;
 			jQuery('.datepicker-input').datepicker(option, value);
-			if (value.length > 0 && !(option == 'format' && value == defaultFormat) && !(option == 'startView' && value == defaultStartView) && !(option == 'theme' && value == defaultTheme))
+			if (value.length > 0 && !(option == 'format' && value == defaultFormat) && !(option == 'startView' && value == defaultStartView) && !(option == 'scheme' && value == defaultScheme))
 			{
 				options[option] = value;
-				attribs += ' ' + ((attr == 'format' || attr == 'startview' || attr == 'theme') ? 'data-' : '') + attr + '="' + value + '"';
+				attribs += ' ' + ((attr == 'format' || attr == 'startview' || attr == 'scheme') ? 'data-' : '') + attr + '="' + value + '"';
 			}
 		});
 		const paramtype = document.getElementById('paramtype').value;

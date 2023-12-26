@@ -119,7 +119,7 @@ function parseDate(str, options)
 	}
 	html += '</table>';
 	const $content = jQuery('#' + input_id + '-picker-content');
-	$content.parents('.datepicker-popover').attr('data-theme', (options.theme == 'auto') ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '') : options.theme);
+	$content.parents('.datepicker-popover').attr('data-scheme', (options.scheme == 'auto') ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '') : options.scheme);
 	$content.html(html).find('table button').on('click', function () {
 		viewDate = viewDate.year(jQuery(this).data('year'));
 		$input.data('viewdate', viewDate);
@@ -204,7 +204,7 @@ function parseDate(str, options)
 			+ ((i % 3 == 2) ? '</tr>' : '');
 	}
 	const $content = jQuery('#' + input_id + '-picker-content');
-	$content.parents('.datepicker-popover').attr('data-theme', (options.theme == 'auto') ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '') : options.theme);
+	$content.parents('.datepicker-popover').attr('data-scheme', (options.scheme == 'auto') ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '') : options.scheme);
 	$content.html(html).find('table button').on('click', function () {
 		viewDate = dayjs(jQuery(this).data('date'));
 		$input.data('viewdate', viewDate);
@@ -338,7 +338,7 @@ function updateDatePicker($input)
 	}
 	html += '</tbody></table>';
 	const $content = jQuery('#' + input_id + '-picker-content');
-	$content.parents('.datepicker-popover').attr('data-theme', (options.theme == 'auto') ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '') : options.theme);
+	$content.parents('.datepicker-popover').attr('data-scheme', (options.scheme == 'auto') ? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : '') : options.scheme);
 	$content.html(html).find('table button').on('click', function () {
 		const newDate = dayjs(jQuery(this).data('date'));
 		$input.val(newDate.format(options.format)).popover('hide').trigger('change');
@@ -451,7 +451,7 @@ jQuery.fn.datepicker = function (options) {
 					this.data('options', input_options);
 				}
 			case 'startView':
-			case 'theme':
+			case 'scheme':
 				if (single_arg)
 				{
 					return input_options[options];
@@ -484,16 +484,16 @@ jQuery.fn.datepicker = function (options) {
 			+ '.datepicker-table td button:not(:disabled):hover { background-color: #6c757d !important; border-color: #6c757d !important; color: #fff; }'
 			+ '.datepicker-table td button:disabled { cursor: not-allowed; }'
 			+ '.datepicker-table td button.today { background-color: #fcf8e3; }'
-			+ '.datepicker-popover[data-theme="dark"] { background-color: #000000; border-color: #ffffff; color: #dee2e6; }'
-			+ '.datepicker-popover[data-theme="dark"] .popover-header { background-color: #343a40; color: #ffffff; }'
-			+ '.datepicker-popover[data-theme="dark"] .popover-header .close { filter: invert(1) grayscale(1) brightness(2); }'
-			+ '.datepicker-popover[data-theme="dark"] .datepicker-btns button.btn { color: #ffffff; }'
-			+ '.datepicker-popover[data-theme="dark"] .datepicker-btns a.btn { color: #0d6efd; }'
-			+ '.datepicker-popover[data-theme="dark"] .datepicker-btns .btn:hover { background-color: #6c757d; color: #ffffff; }'
-			+ '.datepicker-popover[data-theme="dark"] .datepicker-table .thead-light th { background-color: #212529; color: #ffffff; }'
-			+ '.datepicker-popover[data-theme="dark"] .datepicker-table .btn-outline-dark { color: #ffffff; }'
-			+ '.datepicker-popover[data-theme="dark"] .datepicker-table .border-white { border-color: transparent !important; }'
-			+ '.datepicker-popover[data-theme="dark"] .datepicker-table td button.today { background-color: #332701; color: #ffda6a; }'
+			+ '.datepicker-popover[data-scheme="dark"] { background-color: #000000; border-color: #ffffff; color: #dee2e6; }'
+			+ '.datepicker-popover[data-scheme="dark"] .popover-header { background-color: #343a40; color: #ffffff; }'
+			+ '.datepicker-popover[data-scheme="dark"] .popover-header .close { filter: invert(1) grayscale(1) brightness(2); }'
+			+ '.datepicker-popover[data-scheme="dark"] .datepicker-btns button.btn { color: #ffffff; }'
+			+ '.datepicker-popover[data-scheme="dark"] .datepicker-btns a.btn { color: #0d6efd; }'
+			+ '.datepicker-popover[data-scheme="dark"] .datepicker-btns .btn:hover { background-color: #6c757d; color: #ffffff; }'
+			+ '.datepicker-popover[data-scheme="dark"] .datepicker-table .thead-light th { background-color: #212529; color: #ffffff; }'
+			+ '.datepicker-popover[data-scheme="dark"] .datepicker-table .btn-outline-dark { color: #ffffff; }'
+			+ '.datepicker-popover[data-scheme="dark"] .datepicker-table .border-white { border-color: transparent !important; }'
+			+ '.datepicker-popover[data-scheme="dark"] .datepicker-table td button.today { background-color: #332701; color: #ffda6a; }'
 			+ '</style>');
 
 		// Make popovers close when clicked outside of them
@@ -550,10 +550,10 @@ jQuery.fn.datepicker = function (options) {
 		{
 			input_options.startView = startView;
 		}
-		const theme = $input.data('theme') || common_options.theme;
-		if (theme)
+		const scheme = $input.data('scheme') || common_options.scheme;
+		if (scheme)
 		{
-			input_options.theme = theme;
+			input_options.scheme = scheme;
 		}
 		$input.data('options', input_options);
 		let input_id = this.id;
@@ -650,7 +650,7 @@ jQuery.fn.datepicker.defaults = {
 	minDate: '1900-01-01',
 	popoverWidth: '19rem',
 	startView: 'day',
-	theme: 'light'
+	scheme: 'light'
 };
 
 /*
