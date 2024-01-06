@@ -130,7 +130,7 @@ function parseDate(str, options)
 	});
 	jQuery('#' + input_id + '-picker-prev-link').on('click', function () {
 		viewDate = $input.data('viewdate').subtract(30, 'year');
-		jQuery(this).toggleClass('active disabled', true);
+		jQuery(this).addClass('active disabled');
 		$input.data('viewdate', viewDate);
 		updateYearPicker($input);
 		$input.trigger('update.datepicker', [{
@@ -139,7 +139,7 @@ function parseDate(str, options)
 	});
 	jQuery('#' + input_id + '-picker-next-link').on('click', function () {
 		viewDate = $input.data('viewdate').add(30, 'year');
-		jQuery(this).toggleClass('active disabled', true);
+		jQuery(this).addClass('active disabled');
 		$input.data('viewdate', viewDate);
 		updateYearPicker($input);
 		$input.trigger('update.datepicker', [{
@@ -148,7 +148,7 @@ function parseDate(str, options)
 	});
 	jQuery('#' + input_id + '-picker-today-link').on('click', function () {
 		viewDate = today;
-		jQuery(this).toggleClass('active disabled', true);
+		jQuery(this).addClass('active disabled');
 		$input.data('viewdate', viewDate);
 		updateYearPicker($input);
 		$input.trigger('update.datepicker', [{
@@ -215,7 +215,7 @@ function parseDate(str, options)
 	});
 	jQuery('#' + input_id + '-picker-prev-link').on('click', function () {
 		viewDate = $input.data('viewdate').subtract(1, 'year');
-		jQuery(this).toggleClass('active disabled', true);
+		jQuery(this).addClass('active disabled');
 		$input.data('viewdate', viewDate);
 		updateMonthPicker($input);
 		$input.trigger('update.datepicker', [{
@@ -224,7 +224,7 @@ function parseDate(str, options)
 	});
 	jQuery('#' + input_id + '-picker-next-link').on('click', function () {
 		viewDate = $input.data('viewdate').add(1, 'year');
-		jQuery(this).toggleClass('active disabled', true);
+		jQuery(this).addClass('active disabled');
 		$input.data('viewdate', viewDate);
 		updateMonthPicker($input);
 		$input.trigger('update.datepicker', [{
@@ -233,7 +233,7 @@ function parseDate(str, options)
 	});
 	jQuery('#' + input_id + '-picker-today-link').on('click', function () {
 		viewDate = today;
-		jQuery(this).toggleClass('active disabled', true);
+		jQuery(this).addClass('active disabled');
 		$input.data('viewdate', viewDate);
 		updateMonthPicker($input);
 		$input.trigger('update.datepicker', [{
@@ -345,7 +345,7 @@ function updateDatePicker($input)
 	});
 	jQuery('#' + input_id + '-picker-prev-link').on('click', function () {
 		viewDate = $input.data('viewdate').subtract(1, 'month');
-		jQuery(this).toggleClass('active disabled', true);
+		jQuery(this).addClass('active disabled');
 		$input.data('viewdate', viewDate);
 		updateDatePicker($input);
 		$input.trigger('update.datepicker', [{
@@ -354,7 +354,7 @@ function updateDatePicker($input)
 	});
 	jQuery('#' + input_id + '-picker-next-link').on('click', function () {
 		viewDate = $input.data('viewdate').add(1, 'month');
-		jQuery(this).toggleClass('active disabled', true);
+		jQuery(this).addClass('active disabled');
 		$input.data('viewdate', viewDate);
 		updateDatePicker($input);
 		$input.trigger('update.datepicker', [{
@@ -363,7 +363,7 @@ function updateDatePicker($input)
 	});
 	jQuery('#' + input_id + '-picker-today-link').on('click', function () {
 		viewDate = today;
-		jQuery(this).toggleClass('active disabled', true);
+		jQuery(this).addClass('active disabled');
 		$input.data('viewdate', viewDate);
 		updateDatePicker($input);
 		$input.trigger('update.datepicker', [{
@@ -521,12 +521,19 @@ jQuery.fn.datepicker = function (options) {
 	// Initialize the inputs
 	return this.each(function () {
 		const $input = jQuery(this);
-		if ($input.data('datepicker'))
+
+		// Get input id
+		let input_id = this.id;
+		let $toggles = $input.siblings().find('[data-toggle="datepicker"]:not([data-target])');
+		if (this.id)
 		{
-			// If datepicker is already initialized, then return
-			return this;
+			$toggles = $toggles.add('[data-toggle="datepicker"][data-target="#' + this.id + '"]');
 		}
-		$input.data('datepicker', true);
+		else
+		{
+			input_id = 'input-' + Math.floor(Math.random() * 1000000 + 1);
+			this.id = input_id;
+		}
 
 		// Process options
 		let input_options = jQuery.extend(true, {}, common_options);
@@ -556,20 +563,22 @@ jQuery.fn.datepicker = function (options) {
 			input_options.scheme = scheme;
 		}
 		$input.data('options', input_options);
-		let input_id = this.id;
-		let $toggles = $input.siblings().find('[data-toggle="datepicker"]:not([data-target])');
-		if (this.id)
+		if ($input.data('datepicker'))
 		{
-			$toggles = $toggles.add('[data-toggle="datepicker"][data-target="#' + this.id + '"]');
+			// If datepicker is already initialized, then return
+			return this;
 		}
-		else
-		{
-			input_id = 'input-' + Math.floor(Math.random() * 1000000 + 1);
-			this.id = input_id;
-		}
+		$input.data('datepicker', true);
 		$input.addClass('datepicker');
 
+		// Set inputmode
+		if (this.type == 'text' && !this.inputMode)
+		{
+			this.inputMode = 'tel';
+		}
+
 		const $label = jQuery('label[for="' + input_id + '"]');
+		const placement = (window.screen.width > 575) ? 'bottom' : 'top';
 		$input.on('change', function () {
 			this.value = this.value.replace(/^\s+|\s+$/g, '');
 			const options = $input.data('options');
@@ -597,10 +606,10 @@ jQuery.fn.datepicker = function (options) {
 			}
 		}).popover({
 			html: true,
-			placement: 'bottom',
+			placement: placement,
 			sanitize: false,
 			title: '<button type="button" class="close mt-n1" data-dismiss="popover">&times;</button>' + (($label.length > 0) ? $label.html() : 'Date'),
-			template: '<div id="' + input_id + '-picker-popover" class="popover datepicker-popover bs-popover-bottom" role="tooltip" style="width:' + input_options.popoverWidth + ';"><div class="arrow"></div><h3 class="popover-header"></h3><div id="' + input_id + '-popover-body" class="popover-body border-bottom"></div><div class="popover-footer bg-light text-right px-3 py-2 rounded-lg" hidden="hidden"><button type="button" class="btn btn-secondary btn-sm" title="Close the picker" data-dismiss="popover"><i class="fas fa-times"></i> Close</button></div></div>',
+			template: '<div id="' + input_id + '-picker-popover" class="popover datepicker-popover bs-popover-' + placement + '" role="tooltip" style="width:' + input_options.popoverWidth + ';"><div class="arrow"></div><h3 class="popover-header"></h3><div id="' + input_id + '-popover-body" class="popover-body border-bottom"></div><div class="popover-footer bg-light text-right px-3 py-2 rounded-lg" hidden="hidden"><button type="button" class="btn btn-secondary btn-sm" title="Close the picker" data-dismiss="popover"><i class="fas fa-times"></i> Close</button></div></div>',
 			trigger: (($toggles.length > 0) ? 'manual' : 'click'),
 			popperConfig: {
 /*
