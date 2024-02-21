@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				break;
 			case 'maxDate':
 			case 'minDate':
-				var pickedDate = jQuery(this).datepicker('date');
+				const pickedDate = jQuery(this).datepicker('date');
 				this_value = (pickedDate) ? pickedDate.format('YYYY-MM-DD') : '';
 				document.getElementById(this.id + '-reset-btn').disabled = !(this_value.length > 0);
 				this.value = this_value;
