@@ -300,7 +300,7 @@ function updateDatePicker($input)
 //	});
 	for (let i = 0; i < 7; i++)
 	{
-		html += '<th class="py-1" scope="col" style="width:14.28%">' + viewDate.day(i).format('dd') + '</th>';
+		html += '<th class="py-1 user-select-none" scope="col" style="width:14.28%">' + viewDate.day(i).format('dd') + '</th>';
 	}
 	html += '</tr></thead><tbody><tr>';
 	let i_date;
