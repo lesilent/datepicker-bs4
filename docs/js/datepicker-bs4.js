@@ -15,10 +15,42 @@
 let initialized = false;
 
 /**
+ * Array of abbreviated month names
+ *
+ * @type {array}
+ */
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+/**
+ * Return the effective year to use
+ *
+ * @param {string} month_day
+ * @param {object} options
+ * @return {number}
+ */
+function getYear(month_day, options)
+{
+	let year = new Date().getFullYear();
+	const input_date = dayjs(year + '-' + month_day);
+	if (input_date && input_date.isValid())
+	{
+		if (options.minDate && input_date.isBefore(options.minDate, 'date'))
+		{
+			year = options.minDate.year() + 1;
+		}
+		else if (options.maxDate && input_date.isAfter(options.maxDate, 'date'))
+		{
+			year = options.maxDate.year() - 1;
+		}
+	}
+	return year;
+}
+
+/**
  * Parse a date string and return a dayjs object
  *
- * @param  {string} str
- * @param  {object} options
+ * @param {string} str
+ * @param {object} options
  * @return {object|boolean} either a dayjs object or false on error
  */
 function parseDate(str, options)
@@ -38,22 +70,16 @@ function parseDate(str, options)
 			&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 32
 			&& /^MM?\s*[\/\-\.]?\s*DD?\s*[\/\-\.]?\s*YY(YY)?$/.test(options.format))
 		{
-			const month_day = '-' + ((matches[1].length > 1) ? '': '0') + matches[1] + '-' + ((matches[2].length > 1) ? '' : '0') + matches[2];
+			const month_day = ((matches[1].length > 1) ? '': '0') + matches[1] + '-' + ((matches[2].length > 1) ? '' : '0') + matches[2];
 			if (matches[3] === undefined)
 			{
-				matches[3] = new Date().getFullYear();
-				input_date = dayjs(matches[3] + month_day);
-				if (input_date && input_date.isValid() && options.maxDate
-					&& input_date.isAfter(options.maxDate, 'date'))
-				{
-					matches[3]--;
-				}
+				matches[3] = getYear(month_day, options);
 			}
 			else if (matches[3].length == 2)
 			{
 				matches[3] = Math.floor(new Date().getFullYear() / 100) * 100 - ((parseInt(matches[3]) >= 50) ? 100 : 0) + parseInt(matches[3]) ;
 			}
-			input_date = dayjs(matches[3] + month_day);
+			input_date = dayjs(matches[3] + '-' + month_day);
 		}
 		else if ((matches = str.match(/^([0-3]?\d)\s*[\/\-\.]?\s*([01]?\d)(?:\s*[\/\-\.]?\s*((\d{2})?\d{2}))?$/))
 			&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 32
@@ -63,19 +89,35 @@ function parseDate(str, options)
 			const month_day = ((matches[2].length > 1) ? '': '0') + matches[2] + '-' + ((matches[1].length > 1) ? '' : '0') + matches[1];
 			if (matches[3] === undefined)
 			{
-				matches[3] = new Date().getFullYear();
-				input_date = dayjs(matches[3] + month_day);
-				if (input_date && input_date.isValid() && options.maxDate
-					&& input_date.isAfter(options.maxDate, 'date'))
-				{
-					matches[3]--;
-				}
+				matches[3] = getYear(month_day, options);
 			}
 			if (matches[3].length == 2)
 			{
 				matches[3] = Math.floor(new Date().getFullYear() / 100) * 100 - ((parseInt(matches[3]) >= 50) ? 100 : 0) + parseInt(matches[3]) ;
 			}
-			input_date = dayjs(matches[3] + month_day);
+			input_date = dayjs(matches[3] + '-' + month_day);
+		}
+		else if ((matches = str.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s*([0-3]?\d)(?:st|nd|rd|th)?(?:[\s,]+(\d{4}))?\b/i))
+			&& parseInt(matches[2]) > 0 && parseInt(matches[2]) < 32)
+		{
+			const month = MONTHS.indexOf(matches[1].toLowerCase()) + 1;
+			const month_day = ((month > 9) ? '': '0') + month.toString() + '-' + ((matches[2].length > 1) ? '' : '0') + matches[2];
+			if (matches[3] == undefined)
+			{
+				matches[3] = getYear(month_day, options);
+			}
+			input_date = dayjs(matches[3] + '-' + month_day);
+		}
+		else if ((matches = str.match(/\b([0-3]?\d)(?:st|nd|rd|th)?\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*(?:[\s,]+(\d{4}))?\b/i))
+			&& parseInt(matches[1]) > 0 && parseInt(matches[1]) < 32)
+		{
+			const month = MONTHS.indexOf(matches[2].toLowerCase()) + 1;
+			const month_day = ((month > 9) ? '': '0') + month.toString() + '-' + ((matches[1].length > 1) ? '' : '0') + matches[1];
+			if (matches[3] == undefined)
+			{
+				matches[3] = getYear(month_day, options);
+			}
+			input_date = dayjs(matches[3] + '-' + month_day);
 		}
 		else
 		{
