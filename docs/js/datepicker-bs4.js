@@ -30,20 +30,30 @@ const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', '
  */
 function getYear(month_day, options)
 {
-	let year = new Date().getFullYear();
-	const input_date = dayjs(year + '-' + month_day);
-	if (input_date && input_date.isValid())
+	const curDate = new Date();
+	let year = curDate.getFullYear();
+	const years = [year + 1, year];
+	if (options.maxDate)
 	{
-		if (options.minDate && input_date.isBefore(options.minDate, 'date'))
-		{
-			year = options.minDate.year() + 1;
-		}
-		else if (options.maxDate && input_date.isAfter(options.maxDate, 'date'))
-		{
-			year = options.maxDate.year() - 1;
-		}
+		years.push(options.maxDate.year());
 	}
-	return year;
+	if (options.minDate)
+	{
+		years.push(options.minDate.year());
+	}
+	return years.filter(function (year) {
+		const input_date = dayjs(year + month_day);
+		return (input_date && input_date.isValid()
+			&& !(options.minDate && input_date.isBefore(options.minDate, 'date'))
+			&& !(options.maxDate && input_date.isAfter(options.maxDate, 'date')));
+	}).toSorted(function (a, b) {
+		const a_day = dayjs(a + month_day);
+		const b_day = dayjs(b + month_day);
+		const a_val = a_day.isBefore(curDate, 'day');
+		const b_val = b_day.isBefore(curDate, 'day');
+		return (a_val != b_val) ? (a_val ? -1 : 1)
+			: (Math.abs(b_day.diff(curDate, 'day')) - Math.abs(a_day.diff(curDate, 'day')));
+	}).pop() || year;
 }
 
 /**
